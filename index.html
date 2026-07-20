@@ -359,6 +359,9 @@
   .payer-group-list{padding:18px 22px 22px;}
   .payer-child{cursor:pointer;}
   .payer-child:hover{background:var(--gold-soft);}
+  .payer-child-deadline{
+    font-size:13px; color:var(--ink-faint); margin-top:2px;
+  }
   .payer-back-bar{padding:14px 22px 0;}
   .payer-back-link{
     display:inline-flex; align-items:center; gap:5px; font-size:13.5px; font-weight:700;
@@ -2379,9 +2382,9 @@
     var itemsHtml = group.items.map(function(it){
       return (
         '<div class="doc-card payer-child" data-ref-idx="'+it.refIdx+'" data-back-payer="'+payerNo+'" role="button" tabindex="0">'+
-          '<div class="doc-head">'+(it.date ? '<span class="doc-date">'+escapeHtml(it.date)+'</span>' : '')+'</div>'+
           '<h3 class="doc-title">'+escapeHtml(it.titleKh)+'</h3>'+
           (it.titleEn ? '<div class="type-title-en">'+escapeHtml(it.titleEn)+'</div>' : '')+
+          (it.date ? '<div class="payer-child-deadline">'+escapeHtml(it.date)+'</div>' : '')+
         '</div>'
       );
     }).join('');
@@ -2418,6 +2421,8 @@
       }
     });
     if(backToPayerNo){
+      var oldHeader = taxModalBody.querySelector('.tax-header');
+      if(oldHeader) oldHeader.remove();
       var backBar = document.createElement('div');
       backBar.className = 'payer-back-bar';
       backBar.innerHTML = '<a href="#" class="payer-back-link">&#10094; ត្រឡប់ក្រោយ</a>';
