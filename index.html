@@ -720,8 +720,6 @@
     <button class="tab-btn" data-tab="dta">DTA<span class="n" id="cnt-dta"></span></button>
     <button class="tab-btn" data-tab="types">ប្រភេទពន្ធ<span class="n" id="cnt-types"></span></button>
     <button class="tab-btn" data-tab="payer">ប្រភេទអ្នកជាប់ពន្ធ<span class="n" id="cnt-payer"></span></button>
-    <button class="tab-btn" data-tab="fx">អត្រាប្តូរប្រាក់</button>
-    <button class="tab-btn" data-tab="interest">អត្រាការប្រាក់</button>
   </div>
   
   <div class="search-bar topbar-inner" id="searchBar">
@@ -2342,11 +2340,11 @@
     1: {
       title: 'ប្រជាពលរដ្ឋទូទៅ (General Public)',
       items: [
-        {titleKh:'ពន្ធលើអចលនទ្រព្យ', titleEn:'Tax on Property', date:'១៣ កញ្ញា ២០២០', refIdx:2},
-        {titleKh:'ពន្ធលើថ្លៃឈ្នួលអចលនទ្រព្យ', titleEn:'Tax on Property Rental', date:'៣១ មីនា ២០២០', refIdx:8},
-        {titleKh:'ពន្ធលើមធ្យោបាយដឹកជញ្ជូន', titleEn:'Tax on Means of Transportation', date:'៣១ មីនា ២០២០', refIdx:4},
-        {titleKh:'ពន្ធលើដីធ្លីមិនបានប្រើប្រាស់', titleEn:'Unused Land Tax', date:'៣១ មីនា ២០២០', refIdx:6},
-        {titleKh:'ពន្ធប្រថាប់ត្រា', titleEn:'Stamp Duty (Transfer Tax)', date:'៣១ មីនា ២០២០', refIdx:7}
+        {titleKh:'ពន្ធលើអចលនទ្រព្យ', titleEn:'Tax on Property', date:'ចាប់ពីថ្ងៃទី០១ ខែមករា រហូតដល់ ថ្ងៃទី៣០ ខែកញ្ញា', refIdx:2},
+        {titleKh:'ពន្ធលើថ្លៃឈ្នួលអចលនទ្រព្យ', titleEn:'Tax on Property Rental', date:'ចាប់ពីថ្ងៃទី០១ ដល់ ថ្ងៃទី២០ នៃខែបន្ទាប់', refIdx:8},
+        {titleKh:'ពន្ធលើមធ្យោបាយដឹកជញ្ជូន', titleEn:'Tax on Means of Transportation', date:'ចាប់ពីថ្ងៃទី ០១ ខែមិថុនា រហូតដល់ ថ្ងៃទី ៣០ ខែវិច្ឆិកា', refIdx:4},
+        {titleKh:'ពន្ធលើដីធ្លីមិនបានប្រើប្រាស់', titleEn:'Unused Land Tax', date:'ចាប់ពីថ្ងៃទី០១ខែមករា រហូតដល់ ថ្ងៃទី ៣០ខែកញ្ញា', refIdx:6},
+        {titleKh:'ពន្ធប្រថាប់ត្រា', titleEn:'Stamp Duty (Transfer Tax)', date:'ក្នុងរយៈពេល ៣ខែ បន្ទាប់ពីកាលបរិច្ឆេទផ្ទេរកម្មសិទ្ធិ ឬសិទ្ធិកាន់កាប់', refIdx:7}
       ]
     },
     2: {
@@ -2470,27 +2468,6 @@
     if(state.tab === 'payer'){ openPayerGroup(noVal); }
     else { openTaxModal(noVal - 1); }
   });
-  function openFxYearModal(yearStr){
-    if(!fxCache) return;
-    var y = fxCache.filter(function(x){ return x.year === yearStr; })[0];
-    if(!y) return;
-    taxModalBody.innerHTML = fxYearTable(y);
-    taxModalBody.classList.remove('tax-table-xs');
-    Array.prototype.forEach.call(taxModalBody.querySelectorAll('table'), function(t){
-      var wrap = document.createElement('div');
-      wrap.className = 'tax-table-wrap';
-      t.parentNode.insertBefore(wrap, t);
-      wrap.appendChild(t);
-    });
-    taxModalOverlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    taxModalOverlay.scrollTop = 0;
-  }
-  document.getElementById('resultsList').addEventListener('click', function(e){
-    var fxCard = e.target.closest('.fx-year-card');
-    if(!fxCard) return;
-    openFxYearModal(fxCard.getAttribute('data-fx-year'));
-  });
 
   var listEl = document.getElementById('resultsList');
   var emptyEl = document.getElementById('emptyState');
@@ -2591,149 +2568,7 @@
     console.warn('Tax Law sheet fetch failed:', err);
   });
 
-  // ---- Exchange Rate: repeating year blocks (Year header, 12 months, Year avg) ----
-  var fxCache = null;
-  function parseExchangeRateRows(rows){
-    var years = [];
-    var i = 0;
-    while(i < rows.length){
-      var r = rows[i];
-      var yearCell = (r[0]||'').trim();
-      var col1 = (r[1]||'').trim().toLowerCase();
-      if(/^\d{4}$/.test(yearCell) && col1 === 'monthly'){
-        var months = [];
-        for(var m = 0; m < 12; m++){
-          var mr = rows[i+1+m] || [];
-          months.push({
-            month:(mr[0]||'').trim(),
-            monthly:(mr[1]||'').trim(),
-            salary:(mr[2]||'').trim()
-          });
-        }
-        var yr = rows[i+13] || [];
-        years.push({ year: yearCell, months: months, yearAvg: (yr[1]||'').trim() });
-        i += 14;
-      } else {
-        i++;
-      }
-    }
-    return years;
-  }
-  function fxYearCard(y){
-    var hasData = y.months.some(function(m){ return m.monthly || m.salary; });
-    return (
-      '<div class="doc-card fx-year-card" data-fx-year="'+escapeHtml(y.year)+'" role="button" tabindex="0">'+
-        '<div class="doc-head"><span class="badge">'+escapeHtml(y.year)+'</span>'+
-          (y.yearAvg ? '<span class="doc-date">មធ្យមភាគឆ្នាំ៖ '+escapeHtml(y.yearAvg)+'</span>' : '')+
-        '</div>'+
-        '<h3 class="doc-title">អត្រាប្តូរប្រាក់ ឆ្នាំ '+escapeHtml(y.year)+'</h3>'+
-        (hasData ? '' : '<div class="type-title-en">មិនទាន់មានទិន្នន័យ</div>')+
-      '</div>'
-    );
-  }
-  function fxYearTable(y){
-    var rowsHtml = y.months.map(function(m){
-      return '<tr><td>'+escapeHtml(m.month)+'</td><td>'+escapeHtml(m.monthly||'-')+'</td><td>'+escapeHtml(m.salary||'-')+'</td></tr>';
-    }).join('');
-    return (
-      '<div class="tax-card">'+
-        '<div class="tax-header"><h2 class="tax-title">អត្រាប្តូរប្រាក់ ឆ្នាំ '+escapeHtml(y.year)+'</h2></div>'+
-        '<div class="tax-body"><div class="card-body nopadding" style="padding:18px 22px;">'+
-          '<table><tr><th>ខែ</th><th>Monthly</th><th>Salary</th></tr>'+rowsHtml+'</table>'+
-          (y.yearAvg ? '<p style="margin-top:14px"><strong>មធ្យមភាគប្រចាំឆ្នាំ៖ '+escapeHtml(y.yearAvg)+'</strong></p>' : '')+
-        '</div></div>'+
-      '</div>'
-    );
-  }
-  function renderFxTab(){
-    listEl.innerHTML = '<div class="empty-state"><div class="msg">កំពុងទាញយកទិន្នន័យ...</div></div>';
-    emptyEl.style.display = 'none';
-    footerEl.textContent = '';
-    totalLabelEl.textContent = '';
-    filteredLabelEl.textContent = '';
-    var run = fxCache ? Promise.resolve(fxCache) : fetchSheetRows('Exchange Rate').then(function(rows){
-      fxCache = parseExchangeRateRows(rows);
-      return fxCache;
-    });
-    run.then(function(years){
-      if(state.tab !== 'fx') return;
-      if(!years.length){
-        listEl.innerHTML = '<div class="empty-state"><div class="msg">មិនទាន់មានទិន្នន័យអត្រាប្តូរប្រាក់នៅឡើយទេ</div></div>';
-        return;
-      }
-      listEl.innerHTML = years.map(fxYearCard).join('');
-      totalLabelEl.textContent = 'សរុប ' + years.length + ' ឆ្នាំ';
-    }).catch(function(err){
-      if(state.tab !== 'fx') return;
-      listEl.innerHTML = '<div class="empty-state"><div class="msg">មិនអាចទាញយកទិន្នន័យបានទេ សូមព្យាយាមម្តងទៀត</div></div>';
-      console.warn('Exchange Rate fetch failed:', err);
-    });
-  }
-
-  // ---- Interest Rate: Type(KH/EN) x Year x rate ----
-  var interestCache = null;
-  function parseInterestRateRows(rows){
-    if(!rows || rows.length < 3) return {title:'', years:[]};
-    var title = (rows[0][0]||'').trim();
-    var byYear = {};
-    var order = [];
-    for(var i = 2; i < rows.length; i++){
-      var r = rows[i];
-      var type = (r[0]||'').trim();
-      var year = (r[1]||'').trim();
-      var rate = (r[2]||'').trim();
-      if(!type || !year) continue;
-      if(!byYear[year]){ byYear[year] = {}; order.push(year); }
-      byYear[year][type] = rate;
-    }
-    return { title: title, years: order.map(function(y){ return {year:y, KH:byYear[y].KH||'', EN:byYear[y].EN||''}; }) };
-  }
-  function renderInterestTab(){
-    listEl.innerHTML = '<div class="empty-state"><div class="msg">កំពុងទាញយកទិន្នន័យ...</div></div>';
-    emptyEl.style.display = 'none';
-    footerEl.textContent = '';
-    totalLabelEl.textContent = '';
-    filteredLabelEl.textContent = '';
-    var run = interestCache ? Promise.resolve(interestCache) : fetchSheetRows('interest rate').then(function(rows){
-      interestCache = parseInterestRateRows(rows);
-      return interestCache;
-    });
-    run.then(function(data){
-      if(state.tab !== 'interest') return;
-      if(!data.years.length){
-        listEl.innerHTML = '<div class="empty-state"><div class="msg">មិនទាន់មានទិន្នន័យអត្រាការប្រាក់នៅឡើយទេ</div></div>';
-        return;
-      }
-      var rowsHtml = data.years.map(function(y){
-        return (
-          '<tr><td>'+escapeHtml(y.year)+'</td><td>'+escapeHtml(y.KH||'-')+'</td><td>'+escapeHtml(y.EN||'-')+'</td></tr>'
-        );
-      }).join('');
-      listEl.innerHTML = (
-        '<div class="tax-card tax-modal-body" style="padding:0;background:var(--bg-card);border:1px solid var(--line);border-radius:4px;overflow:hidden;">'+
-          '<div class="tax-header" style="padding:16px 22px 0;"><h2 class="tax-title">'+escapeHtml(data.title || 'អត្រាការប្រាក់')+'</h2></div>'+
-          '<div class="tax-body"><div class="card-body nopadding" style="padding:18px 22px;">'+
-            '<table><tr><th>ឆ្នាំ</th><th>KH</th><th>EN</th></tr>'+rowsHtml+'</table>'+
-          '</div></div>'+
-        '</div>'
-      );
-      Array.prototype.forEach.call(listEl.querySelectorAll('table'), function(t){
-        var wrap = document.createElement('div');
-        wrap.className = 'tax-table-wrap';
-        t.parentNode.insertBefore(wrap, t);
-        wrap.appendChild(t);
-      });
-      totalLabelEl.textContent = 'សរុប ' + data.years.length + ' ឆ្នាំ';
-    }).catch(function(err){
-      if(state.tab !== 'interest') return;
-      listEl.innerHTML = '<div class="empty-state"><div class="msg">មិនអាចទាញយកទិន្នន័យបានទេ សូមព្យាយាមម្តងទៀត</div></div>';
-      console.warn('Interest rate fetch failed:', err);
-    });
-  }
-
   function render(){
-    if(state.tab === 'fx'){ renderFxTab(); return; }
-    if(state.tab === 'interest'){ renderInterestTab(); return; }
     var records = dataForTab[state.tab];
     var q = state.query.trim().toLowerCase();
     var terms = q.length ? q.split(/\s+/).filter(Boolean) : [];
@@ -2765,8 +2600,6 @@
   }
 
   // ---------- tabs ----------
-  var searchBarEl = document.getElementById('searchBar');
-  var metaRowEl = document.getElementById('metaRow');
   document.getElementById('tabs').addEventListener('click', function(e){
     var btn = e.target.closest('.tab-btn');
     if(!btn) return;
@@ -2777,11 +2610,8 @@
     input.value = '';
     clearBtn.classList.remove('show');
     document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active', b === btn); });
-    var noSearchTabs = (state.tab === 'fx' || state.tab === 'interest');
-    searchBarEl.style.display = noSearchTabs ? 'none' : '';
-    metaRowEl.style.display = noSearchTabs ? 'none' : '';
     var placeholders = { law:'វាយចំណងជើង លេខលិខិត ឬពាក្យគន្លឹះ...', reg:'វាយចំណងជើង ឬពាក្យគន្លឹះ...', dta:'វាយឈ្មោះប្រទេស ឬពាក្យគន្លឹះ...', types:'វាយឈ្មោះប្រភេទពន្ធ...', payer:'វាយប្រភេទអ្នកជាប់ពន្ធ...' };
-    if(!noSearchTabs) input.placeholder = placeholders[state.tab];
+    input.placeholder = placeholders[state.tab];
     renderTypeFilters();
     renderStatusFilters();
     render();
