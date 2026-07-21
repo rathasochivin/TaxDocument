@@ -514,6 +514,8 @@
       <div class="vg-icon">🚫</div>
       <h2>សំណើត្រូវបានបដិសេធ</h2>
       <p>ម្ចាស់ឯកសារមិនបានអនុញ្ញាតឱ្យចូលមើលទេ។</p>
+      <p>សូមស្នើសុំម្តងទៀត។</p>
+      <button id="vgRetryBtn0" type="button">ស្នើសុំម្តងទៀត</button>
     </div>
 
     <!-- ករណីផុតកំណត់ពេល -->
@@ -543,6 +545,21 @@
 
   var STORAGE_KEY = 'vg_request_id';
   var EXPIRES_KEY = 'vg_expires_at';
+  var DEVICE_KEY = 'vg_device_id';
+
+  function getDeviceId(){
+    try{
+      var id = localStorage.getItem(DEVICE_KEY);
+      if(!id){
+        id = 'dev-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
+        localStorage.setItem(DEVICE_KEY, id);
+      }
+      return id;
+    }catch(e){
+      return 'dev-nostorage-' + Math.random().toString(36).slice(2, 12);
+    }
+  }
+  var deviceId = getDeviceId();
   var body = document.body;
   var guardEl = document.getElementById('viewGuard');
   body.classList.add('vg-locked');
@@ -553,6 +570,7 @@
   var stepExpired = document.getElementById('vgStepExpired');
   var stepRevoked = document.getElementById('vgStepRevoked');
   var requestBtn  = document.getElementById('vgRequestBtn');
+  var retryBtn0   = document.getElementById('vgRetryBtn0');
   var retryBtn    = document.getElementById('vgRetryBtn');
   var retryBtn2   = document.getElementById('vgRetryBtn2');
   var retryBtnWaiting = document.getElementById('vgRetryBtnWaiting');
@@ -696,7 +714,7 @@
     }
     requestBtn.disabled = true;
     errorEl.style.display = 'none';
-    fetch(APPS_SCRIPT_URL + '?action=request&name=' + encodeURIComponent(name))
+    fetch(APPS_SCRIPT_URL + '?action=request&name=' + encodeURIComponent(name) + '&device=' + encodeURIComponent(deviceId))
       .then(function(r){ return r.json(); })
       .then(function(data){
         if(!data.id) throw new Error('no id');
@@ -718,10 +736,32 @@
     showStep(stepRequest);
   }
 
+  // ត្រួតពិនិត្យស្ថានភាពបច្ចុប្បន្នរបស់ device នេះជាមុនសិន (ក្នុងករណី admin
+  // បានអនុញ្ញាត ឬបន្ថែមពេលរួចហើយ) មុននឹងសម្រេចថាត្រូវផ្ញើសំណើថ្មីឬអត់
+  function smartRetry(btn){
+    if(btn) btn.disabled = true;
+    fetch(APPS_SCRIPT_URL + '?action=statusByDevice&device=' + encodeURIComponent(deviceId))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(btn) btn.disabled = false;
+        if(data.status === 'approved' && data.id){
+          localStorage.setItem(STORAGE_KEY, data.id);
+          unlock(data.id, data.expiresAt || null);
+        } else {
+          resetToRequest();
+        }
+      })
+      .catch(function(){
+        if(btn) btn.disabled = false;
+        resetToRequest();
+      });
+  }
+
   requestBtn.addEventListener('click', sendRequest);
-  retryBtn.addEventListener('click', resetToRequest);
-  retryBtn2.addEventListener('click', resetToRequest);
-  if(retryBtnWaiting) retryBtnWaiting.addEventListener('click', resetToRequest);
+  if(retryBtn0) retryBtn0.addEventListener('click', function(){ smartRetry(retryBtn0); });
+  retryBtn.addEventListener('click', function(){ smartRetry(retryBtn); });
+  retryBtn2.addEventListener('click', function(){ smartRetry(retryBtn2); });
+  if(retryBtnWaiting) retryBtnWaiting.addEventListener('click', function(){ smartRetry(retryBtnWaiting); });
 
   // ប្រសិនបើធ្លាប់ស្នើសុំរួច (id ចាស់ក្នុង browser នេះ) ពិនិត្យស្ថានភាពភ្លាមៗ
   var existingId = localStorage.getItem(STORAGE_KEY);
