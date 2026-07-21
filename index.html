@@ -651,16 +651,19 @@
     border-bottom:2px solid #C7A252;
   }
   .app-switch-btn{
-    flex:1; max-width:300px; min-height:42px;
+    flex:0 1 auto; min-height:38px; max-width:280px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Khmer OS Muol Light','Moul', sans-serif; font-size:13px; font-weight:700;
-    line-height:1.35; word-break:keep-all; overflow-wrap:normal;
-    padding:8px 14px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
+    line-height:1.35; white-space:normal; word-break:keep-all; overflow-wrap:normal;
+    padding:8px 18px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
     background:transparent; color:#CFC8B4; cursor:pointer; text-align:center;
     transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
   .app-switch-btn.active{
     background:#C7A252; color:#1B2C3B; border-color:#C7A252;
+  }
+  @media (max-width:420px){
+    .app-switch-btn{ padding:8px 12px; font-size:12px; }
   }
   #fxOverlay{
     position:fixed; inset:0; z-index:9000; background:#fff;
@@ -684,7 +687,7 @@
 
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
-  <button type="button" class="app-switch-btn" id="switchToFx">អត្រាប្តូរប្រាក់ /<br>អត្រាការប្រាក់</button>
+  <button type="button" class="app-switch-btn" id="switchToFx">អត្រាប្តូរប្រាក់ / អត្រាការប្រាក់</button>
 </div>
 
 <div id="fxOverlay">
