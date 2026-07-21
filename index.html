@@ -107,21 +107,6 @@
     font-size:12.5px; color:#E4D6A8; letter-spacing:.02em;
     font-weight:500;
   }
-  .deadline-badge{
-    display:flex; flex-direction:column; align-items:center; gap:2px;
-    font-family:'IBM Plex Mono',monospace;
-    background:rgba(227,185,104,.12);
-    border:1px solid rgba(227,185,104,.4);
-    border-radius:9px;
-    padding:5px 12px;
-  }
-  .db-label{
-    font-size:10px; color:#E4D6A8; letter-spacing:.03em;
-  }
-  .db-time{
-    font-size:13.5px; font-weight:700; color:#F7EFDD;
-    letter-spacing:.02em;
-  }
 
   /* ---------- Tabs ---------- */
   .tabs{
@@ -1687,10 +1672,6 @@ initPanels();
     </div>
     
     <div class="header-right">
-      <div class="deadline-badge" id="deadlineBadge">
-        <span class="db-label">នៅសល់ពេលប្រើប្រាស់</span>
-        <span class="db-time" id="deadlineTime">—</span>
-      </div>
       <div class="author-line">រៀបចំដោយ Ratha Sochivin</div>
     </div>
   </div>
@@ -3548,49 +3529,6 @@ initPanels();
   renderTypeFilters();
   renderStatusFilters();
   render();
-})();
-</script>
-
-<script>
-(function(){
-  var el = document.getElementById('deadlineTime');
-  if(!el) return;
-
-  // ចំនួនថ្ងៃដែលអនុញ្ញាតឲ្យប្រើប្រាស់ បន្ទាប់ពីចូលមើលលើកដំបូង — ប្តូរលេខនេះបានតាមចង់បាន
-  var TRIAL_DAYS = 30;
-
-  var STORAGE_KEY = 'txd_first_visit';
-  var firstVisit;
-  try{
-    firstVisit = localStorage.getItem(STORAGE_KEY);
-    if(!firstVisit){
-      firstVisit = Date.now().toString();
-      localStorage.setItem(STORAGE_KEY, firstVisit);
-    }
-    firstVisit = parseInt(firstVisit, 10);
-  } catch(e){
-    // បើ localStorage មិនអាចប្រើបាន (private mode ។ល។) ចាត់ទុកថាចាប់ផ្តើមប្រើពីពេលនេះ
-    firstVisit = Date.now();
-  }
-
-  var deadline = firstVisit + (TRIAL_DAYS * 24 * 60 * 60 * 1000);
-
-  function update(){
-    var now = Date.now();
-    var diffMs = deadline - now;
-    if(diffMs <= 0){
-      el.textContent = 'ផុតកំណត់';
-      return;
-    }
-    var totalMinutes = Math.floor(diffMs / 60000);
-    var days = Math.floor(totalMinutes / 1440);
-    var hours = Math.floor((totalMinutes % 1440) / 60);
-    var minutes = totalMinutes % 60;
-    el.textContent = days + ' ថ្ងៃ ' + hours + ' ម៉ោង ' + minutes + ' នាទី';
-  }
-
-  update();
-  setInterval(update, 30000);
 })();
 </script>
 </body>
