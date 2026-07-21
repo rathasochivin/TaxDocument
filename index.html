@@ -220,14 +220,14 @@
   .status-badge.st-partial{background:var(--amber-soft); color:var(--amber);}
 
   .badge-link{
-    display:inline-flex; align-items:center; gap:4px;
-    font-size:13px; font-weight:700; font-family:'Khmer OS Siemreap', sans-serif;
-    border-radius:3px; padding:2.5px 8px;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:26px; height:24px;
+    border-radius:3px;
     border:1px solid var(--maroon); color:var(--maroon-deep);
     background:#FBF6EC; text-decoration:none;
   }
   .badge-link:hover{background:var(--gold-soft);}
-  .badge-link svg{width:11px; height:11px;}
+  .badge-link svg{width:13px; height:13px;}
 
   .doc-no{font-size:13px; color:var(--ink-faint);}
   .doc-date{
@@ -651,10 +651,11 @@
     border-bottom:2px solid #C7A252;
   }
   .app-switch-btn{
-    flex:1; max-width:260px;
-    font-family:'Khmer OS Muol Light','Moul', sans-serif; font-size:11.5px; font-weight:700;
-    line-height:1.5; word-break:keep-all; overflow-wrap:normal;
-    padding:9px 10px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
+    flex:1; max-width:300px; min-height:42px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Khmer OS Muol Light','Moul', sans-serif; font-size:13px; font-weight:700;
+    line-height:1.35; word-break:keep-all; overflow-wrap:normal;
+    padding:8px 14px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
     background:transparent; color:#CFC8B4; cursor:pointer; text-align:center;
     transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
@@ -2241,7 +2242,7 @@
         '<div class="doc-head">'+
           '<span class="badge">'+escapeHtml(r.type)+'</span>'+
           '<span class="status-badge '+r.statusCls+'">'+escapeHtml(statusLabel)+'</span>'+
-          '<a class="badge-link" href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+docIcon+' បើកឯកសារ</a>'+
+          '<a class="badge-link" href="'+r.link+'" target="_blank" rel="noopener noreferrer" title="បើកឯកសារ" aria-label="បើកឯកសារ">'+docIcon+'</a>'+
           '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
         '</div>'+
         (r.docNo ? '<div class="doc-no">'+escapeHtml(r.docNo)+'</div>' : '')+
