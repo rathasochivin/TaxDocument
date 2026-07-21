@@ -94,7 +94,7 @@
   
   .brand-title{
     font-family:'Khmer OS Muol Light','Moul',serif;
-    font-size:24px; line-height:1.4;
+    font-size:22px; line-height:1.4; letter-spacing:.01em;
     color:#F7EFDD; margin:0 0 5px 0; font-weight:400;
   }
   .dept-label{
@@ -117,14 +117,16 @@
     flex:0 0 auto;
     border:none; background:none; cursor:pointer;
     color:#B9C4CE;
-    font-family:'Khmer OS Muol Light','Moul',sans-serif; font-weight:700; font-size:16px;
+    font-family:'Khmer OS Muol Light','Moul',sans-serif; font-weight:700; font-size:14.5px;
+    letter-spacing:.01em;
     padding:11px 18px;
     border-bottom:3px solid transparent;
     white-space:nowrap;
+    transition:color .15s ease, border-color .15s ease;
   }
   .tab-btn .n{
     display:inline-block; margin-inline-start:6px;
-    font-size:15px; font-weight:400; color:#8FA0AE;
+    font-size:14px; font-weight:400; color:#8FA0AE;
   }
   .tab-btn.active{color:#F7EFDD; border-bottom-color:var(--gold);}
   .tab-btn:hover{color:#F7EFDD;}
@@ -163,8 +165,9 @@
   .chip{
     flex:0 0 auto; display:inline-flex; align-items:center; gap:6px;
     border:1px solid var(--line); background:var(--bg-card); border-radius:20px;
-    padding:6px 13px; font-size:13.5px; font-family:'Khmer OS Muol Light','Moul', sans-serif;
+    padding:6px 13px; font-size:12.5px; font-family:'Khmer OS Muol Light','Moul', sans-serif;
     color:var(--ink-soft); white-space:nowrap; cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
   }
   .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--maroon);}
   .chip.active{background:var(--gold-soft); border-color:var(--maroon); color:var(--ink); font-weight:700;}
@@ -180,10 +183,12 @@
   .results-list{display:flex; flex-direction:column; gap:12px;}
 
   .doc-card{
-    background:var(--bg-card); border:1px solid var(--line); border-radius:4px;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:6px;
     padding:15px 18px; display:flex; flex-direction:column; gap:7px;
     border-left:5px solid var(--maroon);
+    transition:box-shadow .15s ease, transform .15s ease;
   }
+  .doc-card:hover{box-shadow:0 3px 12px -4px rgba(34,31,26,0.18); transform:translateY(-1px);}
   .doc-card.t-teal{border-left-color:var(--teal);}
   .doc-card.t-navy{border-left-color:var(--navy);}
   .doc-card.t-gold{border-left-color:var(--gold);}
@@ -215,10 +220,15 @@
   .status-badge.st-partial{background:var(--amber-soft); color:var(--amber);}
 
   .doc-no{font-size:13px; color:var(--ink-faint);}
-  .doc-date{font-size:13px; color:var(--maroon); font-weight:600; margin-inline-start:auto;}
+  .doc-date{
+    font-size:12px; color:var(--maroon-deep); font-weight:700; margin-inline-start:auto;
+    background:var(--gold-soft); border:1px solid #E4D2A8; border-radius:3px;
+    padding:2.5px 8px; white-space:nowrap;
+  }
 
   .doc-title{
-    font-family:'Khmer OS Muol Light','Moul', serif !important; font-weight:600; font-size:16px;
+    font-family:'Khmer OS Muol Light','Moul', serif !important; font-weight:600; font-size:15px;
+    letter-spacing:.005em;
     color:var(--ink); line-height:1.6; margin:0;
   }
   .doc-title a{color:var(--ink);}
@@ -265,7 +275,7 @@
     display:flex; align-items:center; justify-content:center; font-size:14px;
   }
   .type-info{flex:1 1 auto; min-width:0;}
-  .type-title-kh{font-family:'Khmer OS Muol Light','Moul', serif; font-weight:600; font-size:16px; color:var(--ink); margin:0;}
+  .type-title-kh{font-family:'Khmer OS Muol Light','Moul', serif; font-weight:600; font-size:15px; letter-spacing:.005em; color:var(--ink); margin:0;}
   .type-title-en{font-size:13px; color:var(--ink-faint); margin-top:2px;}
   .type-date{font-size:13px; color:var(--ink-faint); flex:0 0 auto;}
   .type-arrow{flex:0 0 auto; color:var(--ink-faint);}
@@ -350,7 +360,7 @@
   .tax-table-xs td, .tax-table-xs th{padding:4px 5px !important;}
   .tax-modal-body img{max-width:100%; height:auto; display:block; margin:16px auto; border-radius:6px;}
   .tax-modal-body .tax-header{border-bottom:2px solid var(--line-soft); padding-bottom:12px; margin-bottom:16px;}
-  .tax-modal-body .tax-title{font-family:'Khmer OS Muol Light','Moul',serif !important; font-size:18px !important; color:var(--maroon-deep); margin:0 0 6px 0; font-weight:700;}
+  .tax-modal-body .tax-title{font-family:'Khmer OS Muol Light','Moul',serif !important; font-size:16.5px !important; letter-spacing:.005em; color:var(--maroon-deep); margin:0 0 6px 0; font-weight:700;}
   .tax-modal-body .tax-section-head{
     font-size:16.5px !important; color:var(--navy); margin:18px 0 8px 0 !important;
     padding-top:12px; border-top:1px solid var(--line-soft);
@@ -632,9 +642,10 @@
   }
   .app-switch-btn{
     flex:1; max-width:260px;
-    font-family:'Khmer OS Muol Light','Moul', sans-serif; font-size:13.5px; font-weight:700;
+    font-family:'Khmer OS Muol Light','Moul', sans-serif; font-size:12.5px; font-weight:700;
     padding:9px 10px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
     background:transparent; color:#CFC8B4; cursor:pointer; text-align:center;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
   .app-switch-btn.active{
     background:#C7A252; color:#1B2C3B; border-color:#C7A252;
