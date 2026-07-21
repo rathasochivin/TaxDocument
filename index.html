@@ -107,6 +107,21 @@
     font-size:12.5px; color:#E4D6A8; letter-spacing:.02em;
     font-weight:500;
   }
+  .deadline-badge{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    font-family:'IBM Plex Mono',monospace;
+    background:rgba(227,185,104,.12);
+    border:1px solid rgba(227,185,104,.4);
+    border-radius:9px;
+    padding:5px 12px;
+  }
+  .db-label{
+    font-size:10px; color:#E4D6A8; letter-spacing:.03em;
+  }
+  .db-time{
+    font-size:13.5px; font-weight:700; color:#F7EFDD;
+    letter-spacing:.02em;
+  }
 
   /* ---------- Tabs ---------- */
   .tabs{
@@ -397,6 +412,30 @@
 </style>
 </head>
 <body>
+
+<!-- ==========================================================================
+     ម៉ូតថែទាំគេហទំព័រ (Maintenance Mode)
+     ចង់បិទគេហទំព័រជាបណ្តោះអាសន្នសម្រាប់អ្នកប្រើប្រាស់ទាំងអស់ (ដើម្បីធ្វើបច្ចុប្បន្នភាព)?
+     គ្រាន់តែប្តូរ false ទៅ true ខាងក្រោម រួច Commit — គ្មានអ្វីផ្សេងទៀតត្រូវកែទេ។
+     ចង់បើកគេហទំព័រឡើងវិញ? ប្តូរ true ទៅ false វិញ។
+     ========================================================================== -->
+<script>var MAINTENANCE_MODE = false;</script>
+<div id="maintenanceOverlay" style="display:none; position:fixed; inset:0; z-index:999999; background:linear-gradient(180deg, #24384A 0%, #1B2C3B 100%); align-items:center; justify-content:center; padding:24px; text-align:center; font-family:'Noto Sans Khmer','Space Grotesk',sans-serif;">
+  <div style="max-width:440px;">
+    <div style="font-size:46px; margin-bottom:14px;">🛠️</div>
+    <h1 style="font-family:'Moul','Noto Serif Khmer',serif; font-weight:400; font-size:24px; color:#F4EFE4; margin:0 0 12px;">ប្រព័ន្ធកំពុងធ្វើបច្ចុប្បន្នភាព</h1>
+    <p style="font-size:14.5px; line-height:1.8; color:rgba(244,239,228,.82); margin:0;">សូមអភ័យទោសចំពោះការរអាក់រអួល។ គេហទំព័រកំពុងធ្វើបច្ចុប្បន្នភាពបណ្តោះអាសន្ន សូមចូលមកម្តងទៀតក្នុងពេលឆាប់ៗនេះ។</p>
+  </div>
+</div>
+<script>
+  if(MAINTENANCE_MODE){
+    document.getElementById('maintenanceOverlay').style.display = 'flex';
+    document.documentElement.style.overflow = 'hidden';
+    var __mmStyle = document.createElement('style');
+    __mmStyle.textContent = 'body > *:not(#maintenanceOverlay){display:none !important;}';
+    document.head.appendChild(__mmStyle);
+  }
+</script>
 
 <style>
   #viewGuard{
@@ -771,6 +810,10 @@
     font-size:clamp(18px,3.1vw,26px);
     color:var(--white);
     line-height:1.55;
+    white-space:nowrap;
+  }
+  @media (max-width:640px){
+    .eyebrow-text{ white-space:normal; }
   }
   .fx-icon{
     flex-shrink:0;
@@ -1276,7 +1319,7 @@
   <header>
     <div class="eyebrow">
       <span class="fx-icon" aria-hidden="true"><span class="fx-usd">$</span><span class="fx-arrow">⇄</span><span class="fx-riel">៛</span></span>
-      <span class="eyebrow-text">ប្រព័ន្ធស្វែងរកអត្រាប្តូរប្រាក់<br>និងអត្រាការប្រាក់កម្ចី</span>
+      <span class="eyebrow-text">ប្រព័ន្ធស្វែងរកអត្រាប្តូរប្រាក់ និងអត្រាការប្រាក់កម្ចី</span>
     </div>
   </header>
 
@@ -1644,6 +1687,10 @@ initPanels();
     </div>
     
     <div class="header-right">
+      <div class="deadline-badge" id="deadlineBadge">
+        <span class="db-label">នៅសល់ពេលប្រើប្រាស់</span>
+        <span class="db-time" id="deadlineTime">—</span>
+      </div>
       <div class="author-line">រៀបចំដោយ Ratha Sochivin</div>
     </div>
   </div>
@@ -3501,6 +3548,49 @@ initPanels();
   renderTypeFilters();
   renderStatusFilters();
   render();
+})();
+</script>
+
+<script>
+(function(){
+  var el = document.getElementById('deadlineTime');
+  if(!el) return;
+
+  // ចំនួនថ្ងៃដែលអនុញ្ញាតឲ្យប្រើប្រាស់ បន្ទាប់ពីចូលមើលលើកដំបូង — ប្តូរលេខនេះបានតាមចង់បាន
+  var TRIAL_DAYS = 30;
+
+  var STORAGE_KEY = 'txd_first_visit';
+  var firstVisit;
+  try{
+    firstVisit = localStorage.getItem(STORAGE_KEY);
+    if(!firstVisit){
+      firstVisit = Date.now().toString();
+      localStorage.setItem(STORAGE_KEY, firstVisit);
+    }
+    firstVisit = parseInt(firstVisit, 10);
+  } catch(e){
+    // បើ localStorage មិនអាចប្រើបាន (private mode ។ល។) ចាត់ទុកថាចាប់ផ្តើមប្រើពីពេលនេះ
+    firstVisit = Date.now();
+  }
+
+  var deadline = firstVisit + (TRIAL_DAYS * 24 * 60 * 60 * 1000);
+
+  function update(){
+    var now = Date.now();
+    var diffMs = deadline - now;
+    if(diffMs <= 0){
+      el.textContent = 'ផុតកំណត់';
+      return;
+    }
+    var totalMinutes = Math.floor(diffMs / 60000);
+    var days = Math.floor(totalMinutes / 1440);
+    var hours = Math.floor((totalMinutes % 1440) / 60);
+    var minutes = totalMinutes % 60;
+    el.textContent = days + ' ថ្ងៃ ' + hours + ' ម៉ោង ' + minutes + ' នាទី';
+  }
+
+  update();
+  setInterval(update, 30000);
 })();
 </script>
 </body>
