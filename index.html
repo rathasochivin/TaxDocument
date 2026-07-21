@@ -822,16 +822,21 @@
   });
 
   // ---------- ការរកឃើញ DevTools ដោយប្រហាក់ប្រហែល (heuristic) ----------
-  var threshold = 160;
-  var wasOpen = false;
-  setInterval(function(){
-    var isOpen = (window.outerWidth - window.innerWidth > threshold) ||
-                 (window.outerHeight - window.innerHeight > threshold);
-    if(isOpen !== wasOpen){
-      wasOpen = isOpen;
-      document.body.classList.toggle('vg-devtools-open', isOpen);
-    }
-  }, 800);
+  // កំណត់សម្គាល់: ការត្រួតពិនិត្យទំហំបង្អួចនេះ មិនអាចទុកចិត្តបានលើទូរស័ព្ទ/tablet ទេ
+  // (browser លើទូរស័ព្ទរាយការណ៍ទំហំខុសពីធម្មតា ធ្វើឲ្យវាស្មានខុស) ដូច្នេះរំលងវាទាំងស្រុងលើ touch device
+  var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+  if(!isTouchDevice){
+    var threshold = 160;
+    var wasOpen = false;
+    setInterval(function(){
+      var isOpen = (window.outerWidth - window.innerWidth > threshold) ||
+                   (window.outerHeight - window.innerHeight > threshold);
+      if(isOpen !== wasOpen){
+        wasOpen = isOpen;
+        document.body.classList.toggle('vg-devtools-open', isOpen);
+      }
+    }, 800);
+  }
 })();
 </script>
 
