@@ -279,12 +279,13 @@
   .results-footer{text-align:center; padding:22px 0 4px; font-size:14px; color:var(--ink-faint);}
 
   @media (max-width:600px){
-    .brand-title{font-size:17px;}
+    .brand-title{font-size:15px;}
     .doc-card{padding:13px 14px;}
     .doc-title{font-size:13.5px;}
     .dept-label{font-size:14px;}
-    .header-row{gap:10px; flex-direction: column; align-items: center; text-align: center;}
-    .header-right{align-items: center;}
+    .header-row{gap:8px; flex-direction:row; align-items:flex-start; justify-content:space-between; text-align:left; flex-wrap:nowrap;}
+    .header-left{text-align:left; min-width:0;}
+    .header-right{align-items:flex-end; text-align:right; flex-shrink:0;}
   }
 
   /* ---------- Tax Types summary + Modal ---------- */
@@ -502,10 +503,8 @@
       <div class="vg-spinner"></div>
       <h2>កំពុងរង់ចាំការអនុញ្ញាត</h2>
       <p>ខ្ញុំបានផ្ញើសំណើរួចរាល់។ ទំព័រនេះនឹងបើកដោយស្វ័យប្រវត្តិ ពេលទទួលបានការអនុញ្ញាត។</p>
-      <p class="vg-error" id="vgWaitingHint" style="display:none;color:#8a7a5c;">
-        ចំណាយពេលយូរជាងធម្មតា? ប្រហែលមានបញ្ហាតភ្ជាប់អ៊ីនធឺណិត។
-      </p>
-      <button id="vgRetryBtnWaiting" type="button" style="display:none;">ស្នើសុំម្តងទៀត</button>
+      <p style="font-size:12.5px;color:#8a7a5c;margin:10px 0 4px;">ចំណាយពេលយូរពេក ឬចង់ស្នើសុំម្តងទៀត?</p>
+      <button id="vgRetryBtnWaiting" type="button" style="background:transparent;color:#5B564C;border:1px solid #ccc;">ស្នើសុំម្តងទៀត</button>
     </div>
 
     <!-- ករណីត្រូវបានបដិសេធ -->
@@ -555,12 +554,10 @@
   var retryBtn    = document.getElementById('vgRetryBtn');
   var retryBtn2   = document.getElementById('vgRetryBtn2');
   var retryBtnWaiting = document.getElementById('vgRetryBtnWaiting');
-  var waitingHint = document.getElementById('vgWaitingHint');
   var nameInput   = document.getElementById('vgNameInput');
   var errorEl     = document.getElementById('vgErrorRequest');
   var pollTimer   = null;
   var watchTimer  = null;
-  var waitingTimeout = null;
 
   // ចំណាំ: #accessBadge ស្ថិតនៅផ្នែកចុងទំព័រ (topbar) ដូច្នេះមិនត្រូវ query វានៅចំណុចនេះទេ
   // (ត្រូវ query សារជាថ្មីនៅក្នុង startCountdown/stopCountdown ដើម្បីធានាថា DOM បានផ្ទុករួច)
@@ -617,17 +614,6 @@
     el.classList.add('active');
     guardEl.style.display = '';
     body.classList.add('vg-locked');
-
-    if(waitingTimeout){ clearTimeout(waitingTimeout); waitingTimeout = null; }
-    if(waitingHint) waitingHint.style.display = 'none';
-    if(retryBtnWaiting) retryBtnWaiting.style.display = 'none';
-
-    if(el === stepWaiting){
-      waitingTimeout = setTimeout(function(){
-        if(waitingHint) waitingHint.style.display = 'block';
-        if(retryBtnWaiting) retryBtnWaiting.style.display = 'block';
-      }, 30000);
-    }
   }
 
   function unlock(id, expiresAt){
