@@ -1618,7 +1618,7 @@ initPanels();
   function openFx(){
     if(!fxIframe){
       var tpl = document.getElementById('fxTemplate');
-      var html = tpl.textContent.split('<\\/script>').join('</script>');
+      var html = tpl.textContent.split('<\\/script>').join('<' + '/script>');
       fxIframe = document.createElement('iframe');
       fxOverlay.appendChild(fxIframe);
       fxIframe.srcdoc = html;
