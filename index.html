@@ -108,7 +108,8 @@
     font-weight:500;
   }
   .access-badge{
-    display:flex; flex-direction:column; align-items:center; gap:2px;
+    display:flex; align-items:center; gap:2px;
+    align-self:flex-end;
     font-family:'IBM Plex Mono',monospace;
     background:rgba(227,185,104,.12);
     border:1px solid rgba(227,185,104,.4);
@@ -116,11 +117,9 @@
     padding:5px 12px;
     margin-bottom:4px;
   }
-  .ab-label{
-    font-size:10px; color:#E4D6A8; letter-spacing:.03em;
-  }
   .ab-time{
-    font-size:13.5px; font-weight:700; color:#F7EFDD;
+    font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
+    font-size:14px; font-weight:700; color:#F7EFDD;
     letter-spacing:.02em;
   }
 
@@ -1745,7 +1744,6 @@ initPanels();
     
     <div class="header-right">
       <div class="access-badge" id="accessBadge" style="display:none;">
-        <span class="ab-label">សិទ្ធិចូលមើលនៅសល់</span>
         <span class="ab-time" id="accessTime">—</span>
       </div>
       <div class="author-line">រៀបចំដោយ Ratha Sochivin</div>
