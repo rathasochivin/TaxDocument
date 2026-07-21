@@ -247,6 +247,7 @@
   .badge-link svg{width:13px; height:13px;}
 
   .doc-no{font-size:13px; color:var(--ink-faint);}
+  .doc-no-inline{font-size:12px; color:var(--ink-faint);}
   .doc-date{
     font-size:12px; color:var(--maroon-deep); font-weight:700; margin-inline-start:auto;
     background:var(--gold-soft); border:1px solid #E4D2A8; border-radius:3px;
@@ -3305,10 +3306,9 @@ initPanels();
         '<div class="doc-head">'+
           '<span class="badge">'+escapeHtml(r.type)+'</span>'+
           '<span class="status-badge '+r.statusCls+'">'+escapeHtml(statusLabel)+'</span>'+
-          (r.link ? '<a class="badge-link" href="'+r.link+'" target="_blank" rel="noopener noreferrer" title="បើកឯកសារ" aria-label="បើកឯកសារ">'+docIcon+'</a>' : '')+
+          (r.docNo ? '<span class="doc-no-inline">'+escapeHtml(r.docNo)+'</span>' : '')+
           '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
         '</div>'+
-        (r.docNo ? '<div class="doc-no">'+escapeHtml(r.docNo)+'</div>' : '')+
         '<h3 class="doc-title">'+(r.link ? '<a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a>' : titleHtml)+'</h3>'+
       '</div>'
     );
