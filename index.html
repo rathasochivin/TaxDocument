@@ -556,18 +556,21 @@
   var pollTimer   = null;
   var watchTimer  = null;
 
-  var accessBadge  = document.getElementById('accessBadge');
-  var accessTimeEl = document.getElementById('accessTime');
+  // ចំណាំ: #accessBadge ស្ថិតនៅផ្នែកចុងទំព័រ (topbar) ដូច្នេះមិនត្រូវ query វានៅចំណុចនេះទេ
+  // (ត្រូវ query សារជាថ្មីនៅក្នុង startCountdown/stopCountdown ដើម្បីធានាថា DOM បានផ្ទុករួច)
   var countdownTimer = null;
 
   function stopCountdown(){
     if(countdownTimer) clearInterval(countdownTimer);
     countdownTimer = null;
+    var accessBadge = document.getElementById('accessBadge');
     if(accessBadge) accessBadge.style.display = 'none';
     try{ localStorage.removeItem(EXPIRES_KEY); }catch(e){}
   }
 
   function startCountdown(expiresAt){
+    var accessBadge  = document.getElementById('accessBadge');
+    var accessTimeEl = document.getElementById('accessTime');
     if(!accessBadge || !accessTimeEl) return;
     if(!expiresAt){
       // អចិន្ត្រៃយ៍ — គ្មានកំណត់ពេល
