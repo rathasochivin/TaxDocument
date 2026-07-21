@@ -109,13 +109,11 @@
   }
   .access-badge{
     display:flex; align-items:center; gap:2px;
-    align-self:flex-end;
     font-family:'IBM Plex Mono',monospace;
     background:rgba(227,185,104,.12);
     border:1px solid rgba(227,185,104,.4);
     border-radius:9px;
     padding:5px 12px;
-    margin-bottom:4px;
   }
   .ab-time{
     font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
@@ -748,7 +746,7 @@
 <style>
   .app-switch-bar{
     position:sticky; top:0; z-index:40;
-    display:flex; gap:8px;
+    display:flex; align-items:center; gap:8px;
     background:#152230; padding:8px 14px;
     border-bottom:2px solid #C7A252;
   }
@@ -766,6 +764,8 @@
   }
   @media (max-width:420px){
     .app-switch-btn{ padding:8px 12px; font-size:12px; }
+    .access-badge{ padding:4px 8px; }
+    .ab-time{ font-size:12px; }
   }
   #fxOverlay{
     position:fixed; inset:0; z-index:9000; background:#fff;
@@ -790,6 +790,9 @@
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
   <button type="button" class="app-switch-btn" id="switchToFx">អត្រាប្តូរប្រាក់ / អត្រាការប្រាក់</button>
+  <div class="access-badge" id="accessBadge" style="display:none; margin-left:auto;">
+    <span class="ab-time" id="accessTime">—</span>
+  </div>
 </div>
 
 <div id="fxOverlay">
@@ -1750,9 +1753,6 @@ initPanels();
     </div>
     
     <div class="header-right">
-      <div class="access-badge" id="accessBadge" style="display:none;">
-        <span class="ab-time" id="accessTime">—</span>
-      </div>
       <div class="author-line">រៀបចំដោយ Ratha Sochivin</div>
     </div>
   </div>
