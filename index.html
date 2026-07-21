@@ -107,6 +107,22 @@
     font-size:12.5px; color:#E4D6A8; letter-spacing:.02em;
     font-weight:500;
   }
+  .access-badge{
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    font-family:'IBM Plex Mono',monospace;
+    background:rgba(227,185,104,.12);
+    border:1px solid rgba(227,185,104,.4);
+    border-radius:9px;
+    padding:5px 12px;
+    margin-bottom:4px;
+  }
+  .ab-label{
+    font-size:10px; color:#E4D6A8; letter-spacing:.03em;
+  }
+  .ab-time{
+    font-size:13.5px; font-weight:700; color:#F7EFDD;
+    letter-spacing:.02em;
+  }
 
   /* ---------- Tabs ---------- */
   .tabs{
@@ -522,6 +538,7 @@
   var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoagEmWz5ZRDUV51ts4QMT90o3kFLWaYHkCeo4Ubx1XKkTJ0JHoDvNhLXAZahh_vyeWA/exec';
 
   var STORAGE_KEY = 'vg_request_id';
+  var EXPIRES_KEY = 'vg_expires_at';
   var body = document.body;
   var guardEl = document.getElementById('viewGuard');
   body.classList.add('vg-locked');
@@ -539,6 +556,52 @@
   var pollTimer   = null;
   var watchTimer  = null;
 
+  var accessBadge  = document.getElementById('accessBadge');
+  var accessTimeEl = document.getElementById('accessTime');
+  var countdownTimer = null;
+
+  function stopCountdown(){
+    if(countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = null;
+    if(accessBadge) accessBadge.style.display = 'none';
+    try{ localStorage.removeItem(EXPIRES_KEY); }catch(e){}
+  }
+
+  function startCountdown(expiresAt){
+    if(!accessBadge || !accessTimeEl) return;
+    if(!expiresAt){
+      // អចិន្ត្រៃយ៍ — គ្មានកំណត់ពេល
+      if(countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = null;
+      accessBadge.style.display = 'none';
+      try{ localStorage.removeItem(EXPIRES_KEY); }catch(e){}
+      return;
+    }
+    try{ localStorage.setItem(EXPIRES_KEY, String(expiresAt)); }catch(e){}
+    accessBadge.style.display = 'flex';
+    if(countdownTimer) clearInterval(countdownTimer);
+    function tick(){
+      var diffMs = expiresAt - Date.now();
+      if(diffMs <= 0){
+        accessTimeEl.textContent = 'ផុតកំណត់';
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        return;
+      }
+      var totalMinutes = Math.floor(diffMs / 60000);
+      var days = Math.floor(totalMinutes / 1440);
+      var hours = Math.floor((totalMinutes % 1440) / 60);
+      var minutes = totalMinutes % 60;
+      var parts = [];
+      if(days > 0) parts.push(days + ' ថ្ងៃ');
+      if(days > 0 || hours > 0) parts.push(hours + ' ម៉ោង');
+      parts.push(minutes + ' នាទី');
+      accessTimeEl.textContent = parts.join(' ');
+    }
+    tick();
+    countdownTimer = setInterval(tick, 30000);
+  }
+
   var allSteps = [stepRequest, stepWaiting, stepDenied, stepExpired, stepRevoked];
   function showStep(el){
     allSteps.forEach(function(s){ s.classList.remove('active'); });
@@ -547,10 +610,11 @@
     body.classList.add('vg-locked');
   }
 
-  function unlock(id){
+  function unlock(id, expiresAt){
     if(pollTimer) clearInterval(pollTimer);
     body.classList.remove('vg-locked');
     guardEl.style.display = 'none';
+    startCountdown(expiresAt);
     // បន្តពិនិត្យស្ថានភាពក្នុងផ្ទៃខាងក្រោយ ដើម្បីអោយម្ចាស់ឯកសារអាចផ្តាច់សិទ្ធិបានទាំងពេលកំពុងបើកមើលស្រាប់
     watchStatus(id);
   }
@@ -564,15 +628,20 @@
           if(data.status === 'denied' || data.status === 'revoked'){
             clearInterval(watchTimer);
             localStorage.removeItem(STORAGE_KEY);
+            stopCountdown();
             showStep(stepRevoked);
           } else if(data.status === 'expired'){
             clearInterval(watchTimer);
             localStorage.removeItem(STORAGE_KEY);
+            stopCountdown();
             showStep(stepExpired);
           } else if(data.status === 'unknown'){
             clearInterval(watchTimer);
             localStorage.removeItem(STORAGE_KEY);
+            stopCountdown();
             showStep(stepRevoked);
+          } else if(data.status === 'approved'){
+            startCountdown(data.expiresAt || null);
           }
         })
         .catch(function(){ /* silent on transient network errors */ });
@@ -591,7 +660,7 @@
         .then(function(data){
           if(data.status === 'approved'){
             localStorage.setItem(STORAGE_KEY, id);
-            unlock(id);
+            unlock(id, data.expiresAt || null);
           } else if(data.status === 'denied'){
             clearInterval(pollTimer);
             localStorage.removeItem(STORAGE_KEY);
@@ -651,7 +720,7 @@
       .then(function(r){ return r.json(); })
       .then(function(data){
         if(data.status === 'approved'){
-          unlock(existingId);
+          unlock(existingId, data.expiresAt || null);
         } else if(data.status === 'denied'){
           localStorage.removeItem(STORAGE_KEY);
           showStep(stepDenied);
@@ -1672,6 +1741,10 @@ initPanels();
     </div>
     
     <div class="header-right">
+      <div class="access-badge" id="accessBadge" style="display:none;">
+        <span class="ab-label">សិទ្ធិចូលមើលនៅសល់</span>
+        <span class="ab-time" id="accessTime">—</span>
+      </div>
       <div class="author-line">រៀបចំដោយ Ratha Sochivin</div>
     </div>
   </div>
