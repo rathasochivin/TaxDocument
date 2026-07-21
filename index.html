@@ -52,7 +52,7 @@
     padding:10px 24px 0;
     border-bottom:3px solid var(--gold);
   }
-  .topbar-inner{max-width:980px;margin:0 auto;}
+  .topbar-inner{max-width:1400px;margin:0 auto;}
   .header-row{
     display:flex; align-items:center; justify-content:space-between;
     gap:18px; flex-wrap:wrap;
@@ -127,7 +127,7 @@
 
   /* ---------- Tabs ---------- */
   .tabs{
-    display:flex; gap:4px; max-width:980px; margin:0 auto;
+    display:flex; gap:4px; max-width:1400px; margin:0 auto;
     overflow-x:auto;
   }
   .tab-btn{
@@ -150,7 +150,7 @@
 
   /* ---------- Search Bar ---------- */
   .search-bar{
-    max-width:980px;margin:14px auto 0; padding-bottom:16px;
+    max-width:1400px;margin:14px auto 0; padding-bottom:16px;
   }
   .search-wrap{
     position:relative; display:flex; align-items:center;
@@ -174,7 +174,7 @@
     margin:8px -24px 0;
   }
   .filters{
-    max-width:980px; margin:0 auto; padding:10px 20px;
+    max-width:1400px; margin:0 auto; padding:10px 20px;
     display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch;
   }
   .filters.hidden{display:none;}
@@ -190,7 +190,7 @@
   .chip.active{background:var(--gold-soft); border-color:var(--maroon); color:var(--ink); font-weight:700;}
 
   /* ---------- main ---------- */
-  main{max-width:980px; margin:0 auto; padding:16px 20px 80px;}
+  main{max-width:1400px; margin:0 auto; padding:16px 20px 80px;}
   .meta-row{
     display:flex; align-items:center; justify-content:space-between;
     font-size:13.5px; color:var(--ink-faint); padding:4px 2px 12px;
@@ -3317,7 +3317,6 @@ initPanels();
       '<div class="doc-card">'+
         '<div class="doc-head"><span class="doc-date">'+escapeHtml(r.date)+'</span></div>'+
         '<h3 class="doc-title"><a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a></h3>'+
-        '<div class="doc-links"><a class="link-btn" href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+docIcon+' បើកឯកសារ</a></div>'+
       '</div>'
     );
   }
