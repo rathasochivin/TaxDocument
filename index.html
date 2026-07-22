@@ -3252,57 +3252,62 @@ initPanels();
        return 'st-partial';
   }
 
-  var law = DATA.law.map(function(d,i){
-    return Object.assign({}, d, {
-      id:'law'+i,
-      cls: typeClassFor(d.type),
-      statusCls: statusClassFor(d.statusMain),
-      searchBlob:(d.type+' '+d.docNo+' '+d.title).toLowerCase()
+  var law, reg, dta, types, payer;
+  var typeCounts, typeIndex, statusOrder, statusCounts, state;
+
+  function buildDerivedData(){
+    law = DATA.law.map(function(d,i){
+      return Object.assign({}, d, {
+        id:'law'+i,
+        cls: typeClassFor(d.type),
+        statusCls: statusClassFor(d.statusMain),
+        searchBlob:(d.type+' '+d.docNo+' '+d.title).toLowerCase()
+      });
     });
-  });
-  var reg = DATA.reg.map(function(d,i){
-    return Object.assign({}, d, {id:'reg'+i, searchBlob:(d.title+' '+d.date).toLowerCase()});
-  });
-  var dta = DATA.dta.map(function(d,i){
-    return Object.assign({}, d, {id:'dta'+i, searchBlob:(d.title+' '+d.date).toLowerCase()});
-  });
-  var types = TYPES_DATA.map(function(d,i){
-    return Object.assign({}, d, {id:'type'+i, searchBlob:(d.titleKh+' '+d.titleEn+' '+d.date).toLowerCase()});
-  });
-  var payer = PAYER_DATA.map(function(d,i){
-    return Object.assign({}, d, {id:'payer'+i, searchBlob:(d.titleKh+' '+d.titleEn).toLowerCase()});
-  });
+    reg = DATA.reg.map(function(d,i){
+      return Object.assign({}, d, {id:'reg'+i, searchBlob:(d.title+' '+d.date).toLowerCase()});
+    });
+    dta = DATA.dta.map(function(d,i){
+      return Object.assign({}, d, {id:'dta'+i, searchBlob:(d.title+' '+d.date).toLowerCase()});
+    });
+    types = TYPES_DATA.map(function(d,i){
+      return Object.assign({}, d, {id:'type'+i, searchBlob:(d.titleKh+' '+d.titleEn+' '+d.date).toLowerCase()});
+    });
+    payer = PAYER_DATA.map(function(d,i){
+      return Object.assign({}, d, {id:'payer'+i, searchBlob:(d.titleKh+' '+d.titleEn).toLowerCase()});
+    });
 
-  document.getElementById('cnt-law').textContent = law.length;
-  document.getElementById('cnt-reg').textContent = reg.length;
-  document.getElementById('cnt-dta').textContent = dta.length;
-  document.getElementById('cnt-types').textContent = types.length;
-  document.getElementById('cnt-payer').textContent = payer.length;
+    document.getElementById('cnt-law').textContent = law.length;
+    document.getElementById('cnt-reg').textContent = reg.length;
+    document.getElementById('cnt-dta').textContent = dta.length;
+    document.getElementById('cnt-types').textContent = types.length;
+    document.getElementById('cnt-payer').textContent = payer.length;
 
-  // ---------- type / status filter data (law tab only) ----------
-  var typeCounts = [];
-  var typeIndex = {};
-  law.forEach(function(r){
-    if(typeIndex[r.type] === undefined){ typeIndex[r.type] = typeCounts.length; typeCounts.push({key:r.type, cls:r.cls, count:0}); }
-    typeCounts[typeIndex[r.type]].count++;
-  });
+    // ---------- type / status filter data (law tab only) ----------
+    typeCounts = [];
+    typeIndex = {};
+    law.forEach(function(r){
+      if(typeIndex[r.type] === undefined){ typeIndex[r.type] = typeCounts.length; typeCounts.push({key:r.type, cls:r.cls, count:0}); }
+      typeCounts[typeIndex[r.type]].count++;
+    });
 
-  var statusOrder = [
-    {key:'សុពលភាព', cls:'st-valid'},
-    {key:'partial', cls:'st-partial', label:'សុពលភាព (មានករណីលើកលែង)'},
-    {key:'និរាករណ៍', cls:'st-repealed'},
-  ];
-  var statusCounts = statusOrder.map(function(s){
-    var count;
-    if(s.key === 'partial'){
-      count = law.filter(function(r){ return r.statusCls === 'st-partial'; }).length;
-    } else {
-      count = law.filter(function(r){ return r.statusMain === s.key; }).length;
-    }
-    return Object.assign({}, s, {count:count});
-  }).filter(function(s){ return s.count > 0; });
+    statusOrder = [
+      {key:'សុពលភាព', cls:'st-valid'},
+      {key:'partial', cls:'st-partial', label:'សុពលភាព (មានករណីលើកលែង)'},
+      {key:'និរាករណ៍', cls:'st-repealed'},
+    ];
+    statusCounts = statusOrder.map(function(s){
+      var count;
+      if(s.key === 'partial'){
+        count = law.filter(function(r){ return r.statusCls === 'st-partial'; }).length;
+      } else {
+        count = law.filter(function(r){ return r.statusMain === s.key; }).length;
+      }
+      return Object.assign({}, s, {count:count});
+    }).filter(function(s){ return s.count > 0; });
 
-  var state = { tab:'law', activeType:null, activeStatus:null, query:'' };
+    state = { tab:'law', activeType:null, activeStatus:null, query:'' };
+  }
 
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
@@ -3625,7 +3630,7 @@ initPanels();
   var input = document.getElementById('searchInput');
   var clearBtn = document.getElementById('clearBtn');
 
-  var dataForTab = { law:law, reg:reg, dta:dta, types:types, payer:payer };
+  function dataForTab(){ return { law:law, reg:reg, dta:dta, types:types, payer:payer }; }
   var cardFn = { law:cardLaw, reg:cardReg, dta:cardDta, types:cardTypes, payer:cardPayer };
   var labelForTab = { law:'ច្បាប់/ឯកសារ', reg:'ឯកសារចុះបញ្ជីពន្ធ', dta:'កិច្ចព្រមព្រៀង DTA', types:'ប្រភេទពន្ធ', payer:'ប្រភេទអ្នកជាប់ពន្ធ' };
 
@@ -3634,7 +3639,7 @@ initPanels();
   // further down in this script as loadSheetLaw().
 
   function render(){
-    var records = dataForTab[state.tab];
+    var records = dataForTab()[state.tab];
     var q = state.query.trim().toLowerCase();
     var terms = q.length ? q.split(/\s+/).filter(Boolean) : [];
 
@@ -3715,6 +3720,7 @@ initPanels();
       DATA = JSON.parse(b64ToUtf8(document.getElementById('docsData_b64').textContent));
       TYPES_DATA = JSON.parse(b64ToUtf8(document.getElementById('typesData_b64').textContent));
       PAYER_DATA = JSON.parse(b64ToUtf8(document.getElementById('payerData_b64').textContent));
+      buildDerivedData();
       renderTypeFilters();
       renderStatusFilters();
       render();
