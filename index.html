@@ -3711,12 +3711,23 @@ initPanels();
 
   function initApp(){
     if(DATA) return; // already initialized, avoid double-loading
-    DATA = JSON.parse(b64ToUtf8(document.getElementById('docsData_b64').textContent));
-    TYPES_DATA = JSON.parse(b64ToUtf8(document.getElementById('typesData_b64').textContent));
-    PAYER_DATA = JSON.parse(b64ToUtf8(document.getElementById('payerData_b64').textContent));
-    renderTypeFilters();
-    renderStatusFilters();
-    render();
+    try{
+      DATA = JSON.parse(b64ToUtf8(document.getElementById('docsData_b64').textContent));
+      TYPES_DATA = JSON.parse(b64ToUtf8(document.getElementById('typesData_b64').textContent));
+      PAYER_DATA = JSON.parse(b64ToUtf8(document.getElementById('payerData_b64').textContent));
+      renderTypeFilters();
+      renderStatusFilters();
+      render();
+    }catch(err){
+      DATA = null;
+      var msg = 'មានបញ្ហាក្នុងការផ្ទុកទិន្នន័យ៖ ' + (err && err.message ? err.message : String(err));
+      console.error('initApp failed:', err);
+      var host = document.getElementById('results') || document.querySelector('main') || document.body;
+      var box = document.createElement('div');
+      box.style.cssText = 'font-family:monospace;font-size:13px;color:#8a2d21;background:#fdeceb;border:1px solid #e3a79f;border-radius:6px;padding:12px;margin:16px;white-space:pre-wrap;';
+      box.textContent = msg;
+      host.prepend(box);
+    }
   }
   window.__initTaxApp = initApp;
 })();
