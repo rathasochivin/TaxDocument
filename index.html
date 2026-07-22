@@ -234,6 +234,11 @@
   .doc-card.t-plum{border-left-color:var(--plum);}
 
   .doc-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+
+  .doc-compact{ overflow:hidden; }
+  .doc-compact .doc-date{ float:right; margin:1px 0 6px 12px; }
+  .doc-compact .doc-title{ overflow:hidden; }
+
   .badge{
     display:inline-block; font-size:13px; font-weight:700; letter-spacing:.02em;
     color:var(--maroon-deep); background:var(--gold-soft); border:1px solid #E4D2A8;
@@ -526,6 +531,7 @@
       <div class="vg-spinner"></div>
       <h2>កំពុងរង់ចាំការអនុញ្ញាត</h2>
       <p>ខ្ញុំបានផ្ញើសំណើរួចរាល់។ ទំព័រនេះនឹងបើកដោយស្វ័យប្រវត្តិ។</p>
+      <p style="font-size:12.5px;color:#8a7a5c;margin:10px 0 4px;">ស្នើសុំម្តងទៀត?</p>
       <button id="vgRetryBtnWaiting" type="button" style="background:transparent;color:#5B564C;border:1px solid #ccc;">ស្នើសុំម្តងទៀត</button>
     </div>
 
@@ -548,6 +554,7 @@
     <div class="vg-step" id="vgStepRevoked">
       <div class="vg-icon">⛔</div>
       <h2>សិទ្ធិចូលមើលត្រូវបានដកហូត</h2>
+      <p>សូមស្នើសុំម្តងទៀត។</p>
       <button id="vgRetryBtn2" type="button">ស្នើសុំម្តងទៀត</button>
     </div>
 
@@ -3289,8 +3296,10 @@ initPanels();
     var titleHtml = highlight(r.title, terms);
     return (
       '<div class="doc-card">'+
-        '<div class="doc-head"><span class="doc-date">'+escapeHtml(r.date)+'</span></div>'+
-        '<h3 class="doc-title"><a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a></h3>'+
+        '<div class="doc-compact">'+
+          '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
+          '<h3 class="doc-title"><a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a></h3>'+
+        '</div>'+
       '</div>'
     );
   }
@@ -3298,8 +3307,10 @@ initPanels();
     var titleHtml = highlight(r.title, terms);
     return (
       '<div class="doc-card t-navy">'+
-        '<div class="doc-head"><span class="doc-date">'+escapeHtml(r.date)+'</span></div>'+
-        '<h3 class="doc-title">'+titleHtml+'</h3>'+
+        '<div class="doc-compact">'+
+          '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
+          '<h3 class="doc-title">'+titleHtml+'</h3>'+
+        '</div>'+
         '<div class="doc-links">'+
           (r.linkKh ? '<a class="link-btn" href="'+r.linkKh+'" target="_blank" rel="noopener noreferrer">'+docIcon+' ភាសាខ្មែរ</a>' : '')+
           (r.linkEn ? '<a class="link-btn secondary" href="'+r.linkEn+'" target="_blank" rel="noopener noreferrer">'+docIcon+' English</a>' : '')+
