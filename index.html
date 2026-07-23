@@ -6,7 +6,7 @@
 <title>ឯកសារពន្ធដារ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Moul&family=Noto+Serif+Khmer:wght@400;500;600;700&family=Hanuman:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Moul&family=Noto+Serif+Khmer:wght@400;500;600;700&family=Hanuman:wght@300;400;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #F7F4EC;
@@ -109,8 +109,8 @@
     font-weight:400; line-height:1.5; text-align:center;
   }
   .rsc-3d{
-    font-family:'Arial Black','Segoe UI',sans-serif;
-    font-size:30px; font-weight:900; letter-spacing:.05em;
+    font-family:'Luckiest Guy','Arial Black','Segoe UI',sans-serif;
+    font-size:32px; font-weight:400; letter-spacing:.04em;
     line-height:1; text-align:center;
     color:#FFFFFF;
     text-shadow:
@@ -3383,7 +3383,7 @@ initPanels();
         '<div class="doc-card '+r.cls+'">'+
           '<div class="doc-compact">'+
             '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
-            '<h3 class="doc-title">'+(r.link ? '<a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a>' : titleHtml)+'</h3>'+
+            '<h3 class="doc-title">'+(r.link ? '<a href="'+r.link+'" target="gdtDocViewer" rel="noopener noreferrer">'+titleHtml+'</a>' : titleHtml)+'</h3>'+
           '</div>'+
         '</div>'
       );
@@ -3396,7 +3396,7 @@ initPanels();
           (hasDocNo ? '<span class="doc-no-inline">'+escapeHtml(r.docNo)+'</span>' : '')+
           '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
         '</div>'+
-        '<h3 class="doc-title">'+(r.link ? '<a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a>' : titleHtml)+'</h3>'+
+        '<h3 class="doc-title">'+(r.link ? '<a href="'+r.link+'" target="gdtDocViewer" rel="noopener noreferrer">'+titleHtml+'</a>' : titleHtml)+'</h3>'+
       '</div>'
     );
   }
@@ -3406,7 +3406,7 @@ initPanels();
       '<div class="doc-card">'+
         '<div class="doc-compact">'+
           '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
-          '<h3 class="doc-title"><a href="'+r.link+'" target="_blank" rel="noopener noreferrer">'+titleHtml+'</a></h3>'+
+          '<h3 class="doc-title"><a href="'+r.link+'" target="gdtDocViewer" rel="noopener noreferrer">'+titleHtml+'</a></h3>'+
         '</div>'+
       '</div>'
     );
@@ -3420,8 +3420,8 @@ initPanels();
           '<h3 class="doc-title">'+titleHtml+'</h3>'+
         '</div>'+
         '<div class="doc-links">'+
-          (r.linkKh ? '<a class="link-btn" href="'+r.linkKh+'" target="_blank" rel="noopener noreferrer">'+docIcon+' ភាសាខ្មែរ</a>' : '')+
-          (r.linkEn ? '<a class="link-btn secondary" href="'+r.linkEn+'" target="_blank" rel="noopener noreferrer">'+docIcon+' English</a>' : '')+
+          (r.linkKh ? '<a class="link-btn" href="'+r.linkKh+'" target="gdtDocViewer" rel="noopener noreferrer">'+docIcon+' ភាសាខ្មែរ</a>' : '')+
+          (r.linkEn ? '<a class="link-btn secondary" href="'+r.linkEn+'" target="gdtDocViewer" rel="noopener noreferrer">'+docIcon+' English</a>' : '')+
         '</div>'+
       '</div>'
     );
