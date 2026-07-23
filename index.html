@@ -122,9 +122,17 @@
       0 4px 6px rgba(0,0,0,.4),
       0 0 8px currentColor;
   }
-  .rsc-r{ color:#FF6B6B; }
-  .rsc-s{ color:#FFD93D; }
-  .rsc-c{ color:#6BCB77; }
+  @keyframes rscLetterColor{
+    0%   { color:#FF6B6B; }
+    25%  { color:#FFD93D; }
+    50%  { color:#6BCB77; }
+    75%  { color:#4DA6FF; }
+    100% { color:#FF6B6B; }
+  }
+  .rsc-3d span{ animation: rscLetterColor 4s linear infinite; }
+  .rsc-r{ animation-delay:0s; }
+  .rsc-s{ animation-delay:.4s; }
+  .rsc-c{ animation-delay:.8s; }
   @keyframes rscMove{
     0%{ transform: translate(-4px, 0); }
     25%{ transform: translate(0, -2px); }
@@ -248,37 +256,37 @@
     5%       { color:var(--maroon); }
     9%       { color:var(--ink-soft); }
   }
-  /* tabs row: 6 items, own independent 3s cycle (0.5s per tab) */
+  /* tabs row: 6 items, own independent 6s cycle (1s per tab) */
   #tabs .tab-btn{
     animation-name: spotlightColorTab;
-    animation-duration: 3s;
+    animation-duration: 6s;
     animation-timing-function: ease-out;
     animation-iteration-count: infinite;
   }
   #tabs .tab-btn.active{ animation:none; }
   #tabs .tab-btn:nth-child(6n+1){ animation-delay:0s; }
-  #tabs .tab-btn:nth-child(6n+2){ animation-delay:.5s; }
-  #tabs .tab-btn:nth-child(6n+3){ animation-delay:1s; }
-  #tabs .tab-btn:nth-child(6n+4){ animation-delay:1.5s; }
-  #tabs .tab-btn:nth-child(6n+5){ animation-delay:2s; }
-  #tabs .tab-btn:nth-child(6n+6){ animation-delay:2.5s; }
-  /* type-filters row: own independent 4.5s cycle (0.5s per chip), unrelated to the tabs row's timing */
+  #tabs .tab-btn:nth-child(6n+2){ animation-delay:1s; }
+  #tabs .tab-btn:nth-child(6n+3){ animation-delay:2s; }
+  #tabs .tab-btn:nth-child(6n+4){ animation-delay:3s; }
+  #tabs .tab-btn:nth-child(6n+5){ animation-delay:4s; }
+  #tabs .tab-btn:nth-child(6n+6){ animation-delay:5s; }
+  /* type-filters row: own independent 9s cycle (1s per chip), unrelated to the tabs row's timing */
   #typeFilters .chip{
     animation-name: spotlightColorChip;
-    animation-duration: 4.5s;
+    animation-duration: 9s;
     animation-timing-function: ease-out;
     animation-iteration-count: infinite;
   }
   #typeFilters .chip.active{ animation:none; }
   #typeFilters .chip:nth-child(9n+1){ animation-delay:0s; }
-  #typeFilters .chip:nth-child(9n+2){ animation-delay:.5s; }
-  #typeFilters .chip:nth-child(9n+3){ animation-delay:1s; }
-  #typeFilters .chip:nth-child(9n+4){ animation-delay:1.5s; }
-  #typeFilters .chip:nth-child(9n+5){ animation-delay:2s; }
-  #typeFilters .chip:nth-child(9n+6){ animation-delay:2.5s; }
-  #typeFilters .chip:nth-child(9n+7){ animation-delay:3s; }
-  #typeFilters .chip:nth-child(9n+8){ animation-delay:3.5s; }
-  #typeFilters .chip:nth-child(9n+9){ animation-delay:4s; }
+  #typeFilters .chip:nth-child(9n+2){ animation-delay:1s; }
+  #typeFilters .chip:nth-child(9n+3){ animation-delay:2s; }
+  #typeFilters .chip:nth-child(9n+4){ animation-delay:3s; }
+  #typeFilters .chip:nth-child(9n+5){ animation-delay:4s; }
+  #typeFilters .chip:nth-child(9n+6){ animation-delay:5s; }
+  #typeFilters .chip:nth-child(9n+7){ animation-delay:6s; }
+  #typeFilters .chip:nth-child(9n+8){ animation-delay:7s; }
+  #typeFilters .chip:nth-child(9n+9){ animation-delay:8s; }
 
 
   /* ---------- main ---------- */
@@ -603,8 +611,7 @@
       <div class="vg-spinner"></div>
       <h2>កំពុងរង់ចាំការអនុញ្ញាត</h2>
       <p>ខ្ញុំបានផ្ញើសំណើរួចរាល់។ ទំព័រនេះនឹងបើកដោយស្វ័យប្រវត្តិ។</p>
-      <p style="font-size:12.5px;color:#8a7a5c;margin:10px 0 4px;">ស្នើសុំម្តងទៀត?</p>
-      <button id="vgRetryBtnWaiting" type="button" style="background:transparent;color:#5B564C;border:1px solid #ccc;">ស្នើសុំម្តងទៀត</button>
+      <button id="vgRetryBtnWaiting" type="button" style="background:transparent;color:#5B564C;border:1px solid #ccc;margin-top:10px;">ស្នើសុំម្តងទៀត</button>
     </div>
 
     <!-- ករណីត្រូវបានបដិសេធ -->
