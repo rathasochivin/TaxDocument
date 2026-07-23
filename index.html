@@ -3347,7 +3347,7 @@ initPanels();
 
   function cardGlossary(r, terms){
     var titleKhHtml = highlight(r.titleKh, terms);
-    var defHtml = highlight(r.definition, terms).replace(/\n/g, '<br>');
+    var defHtml = highlight(r.definition, terms).replace(/\n\s*\n/g, '<br>').replace(/\n/g, '<br>');
     return (
       '<div class="doc-card t-slate">'+
         '<h3 class="doc-title">'+titleKhHtml+(r.titleEn ? ' <span style="font-weight:400;color:var(--ink-faint);font-size:13px;">('+escapeHtml(r.titleEn)+')</span>' : '')+'</h3>'+
