@@ -233,34 +233,27 @@
   }
   .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--maroon);}
   .chip.active{background:var(--gold-soft); border-color:var(--maroon); color:var(--ink); font-weight:700;}
-  .rainbow-chip{
-    animation: rainbowCycle 6s linear infinite;
-    border-width:1.5px;
+
+  /* ---------- spotlight sweep: highlights one item at a time, no color change ---------- */
+  @keyframes spotlightPulse{
+    0%, 90%, 100% { box-shadow:none; transform:scale(1); }
+    5%             { box-shadow:0 0 0 3px rgba(199,162,82,.6), 0 6px 16px -2px rgba(122,43,36,.35); transform:scale(1.06); }
   }
-  @keyframes rainbowCycle{
-    0%   { background:#FBEAEA; border-color:var(--maroon); color:var(--maroon-deep); }
-    14%  { background:#FBF1E1; border-color:var(--gold);   color:#8A5A17; }
-    28%  { background:#E9F5EF; border-color:var(--green);  color:#1F4A34; }
-    42%  { background:#E4F2F0; border-color:var(--teal);   color:#123E37; }
-    57%  { background:#E7EEF5; border-color:var(--navy);   color:#152A3A; }
-    71%  { background:#EEF0E3; border-color:var(--olive);  color:#3C4720; }
-    85%  { background:#F1E9EF; border-color:var(--plum);   color:#4A2839; }
-    100% { background:#FBEAEA; border-color:var(--maroon); color:var(--maroon-deep); }
+  #tabs .tab-btn, #typeFilters .chip, #statusFilters .chip{
+    animation-name: spotlightPulse;
+    animation-duration: 8s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
-  .rainbow-chip.active{ font-weight:700; }
-  .tab-btn.rainbow-chip{
-    animation: rainbowCycleTab 6s linear infinite;
-  }
-  @keyframes rainbowCycleTab{
-    0%   { border-bottom-color:var(--gold); }
-    14%  { border-bottom-color:#E4B85A; }
-    28%  { border-bottom-color:var(--green); }
-    42%  { border-bottom-color:var(--teal); }
-    57%  { border-bottom-color:#8FB8E0; }
-    71%  { border-bottom-color:var(--olive); }
-    85%  { border-bottom-color:var(--plum); }
-    100% { border-bottom-color:var(--gold); }
-  }
+  #tabs .tab-btn:nth-child(8n+1), #typeFilters .chip:nth-child(8n+1), #statusFilters .chip:nth-child(8n+1){ animation-delay:0s; }
+  #tabs .tab-btn:nth-child(8n+2), #typeFilters .chip:nth-child(8n+2), #statusFilters .chip:nth-child(8n+2){ animation-delay:1s; }
+  #tabs .tab-btn:nth-child(8n+3), #typeFilters .chip:nth-child(8n+3), #statusFilters .chip:nth-child(8n+3){ animation-delay:2s; }
+  #tabs .tab-btn:nth-child(8n+4), #typeFilters .chip:nth-child(8n+4), #statusFilters .chip:nth-child(8n+4){ animation-delay:3s; }
+  #tabs .tab-btn:nth-child(8n+5), #typeFilters .chip:nth-child(8n+5), #statusFilters .chip:nth-child(8n+5){ animation-delay:4s; }
+  #tabs .tab-btn:nth-child(8n+6), #typeFilters .chip:nth-child(8n+6), #statusFilters .chip:nth-child(8n+6){ animation-delay:5s; }
+  #tabs .tab-btn:nth-child(8n+7), #typeFilters .chip:nth-child(8n+7), #statusFilters .chip:nth-child(8n+7){ animation-delay:6s; }
+  #tabs .tab-btn:nth-child(8n+8), #typeFilters .chip:nth-child(8n+8), #statusFilters .chip:nth-child(8n+8){ animation-delay:7s; }
+
 
   /* ---------- main ---------- */
   main{max-width:1400px; margin:0 auto; padding:16px 20px 80px;}
@@ -1924,7 +1917,7 @@ initPanels();
 <div class="topbar">
   
   <div class="tabs" id="tabs">
-    <button class="tab-btn active rainbow-chip" data-tab="law">ច្បាប់ពន្ធដារ<span class="n" id="cnt-law"></span></button>
+    <button class="tab-btn active" data-tab="law">ច្បាប់ពន្ធដារ<span class="n" id="cnt-law"></span></button>
     <button class="tab-btn" data-tab="glossary">សទ្ទានុក្រម<span class="n" id="cnt-glossary"></span></button>
     <button class="tab-btn" data-tab="reg">ពន្ធអចលនទ្រព្យ<span class="n" id="cnt-reg"></span></button>
     <button class="tab-btn" data-tab="dta">DTA<span class="n" id="cnt-dta"></span></button>
@@ -3313,7 +3306,7 @@ initPanels();
     var liveCounts = typeCounts.map(function(t){
       return { key:t.key, cls:t.cls, count: base.filter(function(r){ return r.type === t.key; }).length };
     });
-    var all = '<button class="chip rainbow-chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់ ('+base.length+')</button>';
+    var all = '<button class="chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់ ('+base.length+')</button>';
     var items = liveCounts.map(function(t){
       return '<button class="chip'+(state.activeType===t.key?' active':'')+' '+t.cls.replace('t-','')+'" data-type="'+escapeHtml(t.key)+'"><span class="dot"></span>'+escapeHtml(t.key)+' ('+t.count+')</button>';
     });
@@ -3335,8 +3328,7 @@ initPanels();
     }).filter(function(s){ return s.count > 0; });
     var items = liveCounts.map(function(s){
       var label = s.label || s.key;
-      var rainbow = (s.key === 'សុពលភាព') ? ' rainbow-chip' : '';
-      return '<button class="chip'+rainbow+(state.activeStatus===s.key?' active':'')+'" data-status="'+escapeHtml(s.key)+'"><span class="dot"></span>'+escapeHtml(label)+' ('+s.count+')</button>';
+      return '<button class="chip'+(state.activeStatus===s.key?' active':'')+'" data-status="'+escapeHtml(s.key)+'"><span class="dot"></span>'+escapeHtml(label)+' ('+s.count+')</button>';
     });
     el.innerHTML = items.join('');
     el.scrollLeft = prevScroll;
