@@ -112,10 +112,21 @@
     font-family:'Arial Black','Segoe UI',sans-serif;
     font-size:20px; font-weight:900; letter-spacing:.04em;
     line-height:1; text-align:center;
-    background:linear-gradient(180deg,#F7EFDD 0%,#E4D6A8 45%,#C7A252 100%);
+    background:linear-gradient(100deg,#C7A252 0%,#F7EFDD 25%,#E4D6A8 45%,#C7A252 65%,#F7EFDD 85%,#C7A252 100%);
+    background-size:250% 100%;
     -webkit-background-clip:text; background-clip:text; color:transparent;
     text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 1px rgba(0,0,0,.3), 0 3px 3px rgba(0,0,0,.35);
     filter:drop-shadow(0 1px 0 rgba(255,255,255,.15));
+    display:inline-block;
+    animation: rscShimmer 3.2s linear infinite, rscFloat 2.4s ease-in-out infinite;
+  }
+  @keyframes rscShimmer{
+    0%{ background-position: 0% 50%; }
+    100%{ background-position: 200% 50%; }
+  }
+  @keyframes rscFloat{
+    0%, 100%{ transform: translateY(0); }
+    50%{ transform: translateY(-2px); }
   }
   @media (max-width:600px){
     .author-line{ font-size:10px; }
@@ -206,6 +217,7 @@
   .filters{
     max-width:1400px; margin:0 auto; padding:10px 20px;
     display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    flex-wrap:nowrap; min-height:46px; box-sizing:border-box;
   }
   .filters.hidden{display:none;}
   .filters-sticky .filters + .filters{padding-top:0;}
@@ -875,7 +887,8 @@
   .app-switch-bar{
     position:sticky; top:0; z-index:40;
     display:flex; align-items:center; gap:8px;
-    background:#152230; padding:8px 14px;
+    background:linear-gradient(180deg, #1E6B5C 0%, #0F4B3E 100%);
+    padding:8px 14px;
     border-bottom:2px solid #C7A252;
   }
   .app-switch-btn{
@@ -3260,22 +3273,26 @@ initPanels();
     var el = document.getElementById('typeFilters');
     if(state.tab !== 'law'){ el.classList.add('hidden'); el.innerHTML=''; return; }
     el.classList.remove('hidden');
+    var prevScroll = el.scrollLeft;
     var all = '<button class="chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់</button>';
     var items = typeCounts.map(function(t){
       return '<button class="chip'+(state.activeType===t.key?' active':'')+' '+t.cls.replace('t-','')+'" data-type="'+escapeHtml(t.key)+'"><span class="dot"></span>'+escapeHtml(t.key)+' ('+t.count+')</button>';
     });
     el.innerHTML = all + items.join('');
+    el.scrollLeft = prevScroll;
   }
   function renderStatusFilters(){
     var el = document.getElementById('statusFilters');
     if(state.tab !== 'law'){ el.classList.add('hidden'); el.innerHTML=''; return; }
     el.classList.remove('hidden');
+    var prevScroll = el.scrollLeft;
     var all = '<button class="chip'+(state.activeStatus===null?' active':'')+'" data-status=""><span class="dot"></span>ស្ថានភាពទាំងអស់</button>';
     var items = statusCounts.map(function(s){
       var label = s.label || s.key;
       return '<button class="chip'+(state.activeStatus===s.key?' active':'')+'" data-status="'+escapeHtml(s.key)+'"><span class="dot"></span>'+escapeHtml(label)+' ('+s.count+')</button>';
     });
     el.innerHTML = all + items.join('');
+    el.scrollLeft = prevScroll;
   }
 
   function matchesFilters(r, terms){
