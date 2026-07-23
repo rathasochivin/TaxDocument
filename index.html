@@ -112,21 +112,19 @@
     font-family:'Luckiest Guy','Arial Black','Segoe UI',sans-serif;
     font-size:32px; font-weight:400; letter-spacing:.04em;
     line-height:1; text-align:center;
-    color:#FFFFFF;
-    text-shadow:
-      0 1px 0 #d8d8d8,
-      0 2px 0 #c2c2c2,
-      0 3px 0 #ababab,
-      0 4px 3px rgba(0,0,0,.4),
-      0 6px 8px rgba(0,0,0,.45),
-      0 0 10px rgba(255,255,255,.35);
     display:inline-block;
-    padding:4px 16px;
-    border-radius:10px;
-    background:linear-gradient(180deg, rgba(247,212,136,.35) 0%, rgba(199,162,82,.28) 100%);
-    box-shadow:0 0 0 1.5px rgba(247,212,136,.55), 0 4px 12px -2px rgba(0,0,0,.4);
     animation: rscMove 3.6s ease-in-out infinite;
   }
+  .rsc-3d span{
+    text-shadow:
+      0 1px 0 rgba(0,0,0,.25),
+      0 2px 2px rgba(0,0,0,.35),
+      0 4px 6px rgba(0,0,0,.4),
+      0 0 8px currentColor;
+  }
+  .rsc-r{ color:#FF6B6B; }
+  .rsc-s{ color:#FFD93D; }
+  .rsc-c{ color:#6BCB77; }
   @keyframes rscMove{
     0%{ transform: translate(-4px, 0); }
     25%{ transform: translate(0, -2px); }
@@ -136,7 +134,7 @@
   }
   @media (max-width:600px){
     .author-line{ font-size:10px; }
-    .rsc-3d{ font-size:24px; padding:3px 12px; }
+    .rsc-3d{ font-size:24px; }
   }
   .access-badge{
     display:flex; align-items:center; gap:2px;
@@ -985,7 +983,7 @@
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
   <button type="button" class="app-switch-btn" id="switchToFx">$⇄៛</button>
-  <div class="author-line rsc-3d" style="margin-left:auto;">RSC</div>
+  <div class="author-line rsc-3d" style="margin-left:auto;"><span class="rsc-r">R</span><span class="rsc-s">S</span><span class="rsc-c">C</span></div>
   <div class="access-badge" id="accessBadge" style="display:none;">
     <span class="ab-time" id="accessTime">—</span>
   </div>
