@@ -3283,14 +3283,16 @@ initPanels();
     return true;
   }
 
+  var HIDE_BADGE_TYPES = {'សៀវភៅណែនាំ':1, 'ខិត្តប័ណ្ណ':1, 'ផែនការយុទ្ធសាស្ត្រ':1, 'ឯកសារផ្សេងៗ':1};
   function cardLaw(r, terms){
     var titleHtml = highlight(r.title, terms);
     var hasStatus = !!(r.statusMain && r.statusMain.trim());
     var hasDocNo = !!(r.docNo && r.docNo.trim() && r.docNo.trim().toUpperCase() !== 'N/A');
+    var hideBadge = !!HIDE_BADGE_TYPES[r.type];
     return (
       '<div class="doc-card '+r.cls+'">'+
         '<div class="doc-head">'+
-          '<span class="badge">'+escapeHtml(r.type)+'</span>'+
+          (hideBadge ? '' : '<span class="badge">'+escapeHtml(r.type)+'</span>')+
           (hasStatus ? '<span class="status-badge '+r.statusCls+'">'+escapeHtml(r.statusMain)+'</span>' : '')+
           (hasDocNo ? '<span class="doc-no-inline">'+escapeHtml(r.docNo)+'</span>' : '')+
           '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
