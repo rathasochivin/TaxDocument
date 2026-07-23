@@ -118,15 +118,18 @@
     text-shadow:0 1px 0 rgba(0,0,0,.4), 0 2px 2px rgba(0,0,0,.35), 0 4px 6px rgba(0,0,0,.4);
     filter:drop-shadow(0 0 6px rgba(255,216,107,.55)) drop-shadow(0 1px 0 rgba(255,255,255,.2));
     display:inline-block;
-    animation: rscShimmer 3.2s linear infinite, rscFloat 2.4s ease-in-out infinite;
+    animation: rscShimmer 3.2s linear infinite, rscMove 3.6s ease-in-out infinite;
   }
   @keyframes rscShimmer{
     0%{ background-position: 0% 50%; }
     100%{ background-position: 200% 50%; }
   }
-  @keyframes rscFloat{
-    0%, 100%{ transform: translateY(0); }
-    50%{ transform: translateY(-2px); }
+  @keyframes rscMove{
+    0%{ transform: translate(-4px, 0); }
+    25%{ transform: translate(0, -2px); }
+    50%{ transform: translate(4px, 0); }
+    75%{ transform: translate(0, 2px); }
+    100%{ transform: translate(-4px, 0); }
   }
   @media (max-width:600px){
     .author-line{ font-size:10px; }
@@ -230,6 +233,34 @@
   }
   .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--maroon);}
   .chip.active{background:var(--gold-soft); border-color:var(--maroon); color:var(--ink); font-weight:700;}
+  .rainbow-chip{
+    animation: rainbowCycle 6s linear infinite;
+    border-width:1.5px;
+  }
+  @keyframes rainbowCycle{
+    0%   { background:#FBEAEA; border-color:var(--maroon); color:var(--maroon-deep); }
+    14%  { background:#FBF1E1; border-color:var(--gold);   color:#8A5A17; }
+    28%  { background:#E9F5EF; border-color:var(--green);  color:#1F4A34; }
+    42%  { background:#E4F2F0; border-color:var(--teal);   color:#123E37; }
+    57%  { background:#E7EEF5; border-color:var(--navy);   color:#152A3A; }
+    71%  { background:#EEF0E3; border-color:var(--olive);  color:#3C4720; }
+    85%  { background:#F1E9EF; border-color:var(--plum);   color:#4A2839; }
+    100% { background:#FBEAEA; border-color:var(--maroon); color:var(--maroon-deep); }
+  }
+  .rainbow-chip.active{ font-weight:700; }
+  .tab-btn.rainbow-chip{
+    animation: rainbowCycleTab 6s linear infinite;
+  }
+  @keyframes rainbowCycleTab{
+    0%   { border-bottom-color:var(--gold); }
+    14%  { border-bottom-color:#E4B85A; }
+    28%  { border-bottom-color:var(--green); }
+    42%  { border-bottom-color:var(--teal); }
+    57%  { border-bottom-color:#8FB8E0; }
+    71%  { border-bottom-color:var(--olive); }
+    85%  { border-bottom-color:var(--plum); }
+    100% { border-bottom-color:var(--gold); }
+  }
 
   /* ---------- main ---------- */
   main{max-width:1400px; margin:0 auto; padding:16px 20px 80px;}
@@ -1893,7 +1924,7 @@ initPanels();
 <div class="topbar">
   
   <div class="tabs" id="tabs">
-    <button class="tab-btn active" data-tab="law">ច្បាប់ពន្ធដារ<span class="n" id="cnt-law"></span></button>
+    <button class="tab-btn active rainbow-chip" data-tab="law">ច្បាប់ពន្ធដារ<span class="n" id="cnt-law"></span></button>
     <button class="tab-btn" data-tab="glossary">សទ្ទានុក្រម<span class="n" id="cnt-glossary"></span></button>
     <button class="tab-btn" data-tab="reg">ពន្ធអចលនទ្រព្យ<span class="n" id="cnt-reg"></span></button>
     <button class="tab-btn" data-tab="dta">DTA<span class="n" id="cnt-dta"></span></button>
@@ -3282,7 +3313,7 @@ initPanels();
     var liveCounts = typeCounts.map(function(t){
       return { key:t.key, cls:t.cls, count: base.filter(function(r){ return r.type === t.key; }).length };
     });
-    var all = '<button class="chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់ ('+base.length+')</button>';
+    var all = '<button class="chip rainbow-chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់ ('+base.length+')</button>';
     var items = liveCounts.map(function(t){
       return '<button class="chip'+(state.activeType===t.key?' active':'')+' '+t.cls.replace('t-','')+'" data-type="'+escapeHtml(t.key)+'"><span class="dot"></span>'+escapeHtml(t.key)+' ('+t.count+')</button>';
     });
@@ -3304,7 +3335,8 @@ initPanels();
     }).filter(function(s){ return s.count > 0; });
     var items = liveCounts.map(function(s){
       var label = s.label || s.key;
-      return '<button class="chip'+(state.activeStatus===s.key?' active':'')+'" data-status="'+escapeHtml(s.key)+'"><span class="dot"></span>'+escapeHtml(label)+' ('+s.count+')</button>';
+      var rainbow = (s.key === 'សុពលភាព') ? ' rainbow-chip' : '';
+      return '<button class="chip'+rainbow+(state.activeStatus===s.key?' active':'')+'" data-status="'+escapeHtml(s.key)+'"><span class="dot"></span>'+escapeHtml(label)+' ('+s.count+')</button>';
     });
     el.innerHTML = items.join('');
     el.scrollLeft = prevScroll;
@@ -3690,7 +3722,7 @@ initPanels();
   document.getElementById('statusFilters').addEventListener('click', function(e){
     var btn = e.target.closest('.chip'); if(!btn) return;
     var s = btn.getAttribute('data-status');
-    state.activeStatus = s ? s : null;
+    state.activeStatus = (state.activeStatus === s) ? null : (s ? s : null);
     renderTypeFilters();
     renderStatusFilters();
     render();
