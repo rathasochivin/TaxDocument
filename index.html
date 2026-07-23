@@ -3274,8 +3274,16 @@ initPanels();
     if(state.tab !== 'law'){ el.classList.add('hidden'); el.innerHTML=''; return; }
     el.classList.remove('hidden');
     var prevScroll = el.scrollLeft;
-    var all = '<button class="chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់</button>';
-    var items = typeCounts.map(function(t){
+    // cross-filter: counts reflect only records matching the currently active status
+    var base = state.activeStatus === null ? law : law.filter(function(r){
+      if(state.activeStatus === 'partial') return r.statusCls === 'st-partial';
+      return r.statusMain === state.activeStatus;
+    });
+    var liveCounts = typeCounts.map(function(t){
+      return { key:t.key, cls:t.cls, count: base.filter(function(r){ return r.type === t.key; }).length };
+    });
+    var all = '<button class="chip'+(state.activeType===null?' active':'')+'" data-type=""><span class="dot"></span>ប្រភេទទាំងអស់ ('+base.length+')</button>';
+    var items = liveCounts.map(function(t){
       return '<button class="chip'+(state.activeType===t.key?' active':'')+' '+t.cls.replace('t-','')+'" data-type="'+escapeHtml(t.key)+'"><span class="dot"></span>'+escapeHtml(t.key)+' ('+t.count+')</button>';
     });
     el.innerHTML = all + items.join('');
@@ -3286,8 +3294,16 @@ initPanels();
     if(state.tab !== 'law'){ el.classList.add('hidden'); el.innerHTML=''; return; }
     el.classList.remove('hidden');
     var prevScroll = el.scrollLeft;
-    var all = '<button class="chip'+(state.activeStatus===null?' active':'')+'" data-status=""><span class="dot"></span>ស្ថានភាពទាំងអស់</button>';
-    var items = statusCounts.map(function(s){
+    // cross-filter: counts reflect only records matching the currently active type
+    var base = state.activeType === null ? law : law.filter(function(r){ return r.type === state.activeType; });
+    var liveCounts = statusOrder.map(function(s){
+      var count;
+      if(s.key === 'partial'){ count = base.filter(function(r){ return r.statusCls === 'st-partial'; }).length; }
+      else { count = base.filter(function(r){ return r.statusMain === s.key; }).length; }
+      return Object.assign({}, s, {count:count});
+    }).filter(function(s){ return s.count > 0; });
+    var all = '<button class="chip'+(state.activeStatus===null?' active':'')+'" data-status=""><span class="dot"></span>ស្ថានភាពទាំងអស់ ('+base.length+')</button>';
+    var items = liveCounts.map(function(s){
       var label = s.label || s.key;
       return '<button class="chip'+(state.activeStatus===s.key?' active':'')+'" data-status="'+escapeHtml(s.key)+'"><span class="dot"></span>'+escapeHtml(label)+' ('+s.count+')</button>';
     });
@@ -3669,12 +3685,14 @@ initPanels();
     var t = btn.getAttribute('data-type');
     state.activeType = t ? t : null;
     renderTypeFilters();
+    renderStatusFilters();
     render();
   });
   document.getElementById('statusFilters').addEventListener('click', function(e){
     var btn = e.target.closest('.chip'); if(!btn) return;
     var s = btn.getAttribute('data-status');
     state.activeStatus = s ? s : null;
+    renderTypeFilters();
     renderStatusFilters();
     render();
   });
