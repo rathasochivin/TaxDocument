@@ -113,8 +113,13 @@
     font-size:30px; font-weight:900; letter-spacing:.05em;
     line-height:1; text-align:center;
     color:#FFFFFF;
-    text-shadow:0 1px 0 rgba(0,0,0,.45), 0 2px 3px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.45);
-    filter:drop-shadow(0 0 7px rgba(255,255,255,.5));
+    text-shadow:
+      0 1px 0 #d8d8d8,
+      0 2px 0 #c2c2c2,
+      0 3px 0 #ababab,
+      0 4px 3px rgba(0,0,0,.4),
+      0 6px 8px rgba(0,0,0,.45),
+      0 0 10px rgba(255,255,255,.35);
     display:inline-block;
     animation: rscMove 3.6s ease-in-out infinite;
   }
@@ -229,43 +234,49 @@
   .chip.active{background:var(--gold-soft); border-color:var(--maroon); color:var(--ink); font-weight:700;}
 
   /* ---------- spotlight sweep: highlights one item at a time, no color change ---------- */
-  @keyframes spotlightPulse{
-    0%, 100% { background:transparent; }
-    1%       { background:rgba(199,162,82,.32); }
-    6%       { background:rgba(199,162,82,.32); }
-    11%      { background:transparent; }
+  @keyframes spotlightColorTab{
+    0%, 100% { color:#B9C4CE; }
+    1%       { color:#F7D488; }
+    6%       { color:#F7D488; }
+    11%      { color:#B9C4CE; }
   }
-  /* tabs row: 6 items, own independent 6s cycle (1s per tab) */
+  @keyframes spotlightColorChip{
+    0%, 100% { color:var(--ink-soft); }
+    1%       { color:var(--maroon); }
+    5%       { color:var(--maroon); }
+    9%       { color:var(--ink-soft); }
+  }
+  /* tabs row: 6 items, own independent 3s cycle (0.5s per tab) */
   #tabs .tab-btn{
-    animation-name: spotlightPulse;
-    animation-duration: 6s;
+    animation-name: spotlightColorTab;
+    animation-duration: 3s;
     animation-timing-function: ease-out;
     animation-iteration-count: infinite;
-    border-radius:6px;
   }
+  #tabs .tab-btn.active{ animation:none; }
   #tabs .tab-btn:nth-child(6n+1){ animation-delay:0s; }
-  #tabs .tab-btn:nth-child(6n+2){ animation-delay:1s; }
-  #tabs .tab-btn:nth-child(6n+3){ animation-delay:2s; }
-  #tabs .tab-btn:nth-child(6n+4){ animation-delay:3s; }
-  #tabs .tab-btn:nth-child(6n+5){ animation-delay:4s; }
-  #tabs .tab-btn:nth-child(6n+6){ animation-delay:5s; }
-  /* type-filters row: own independent 9s cycle, unrelated to the tabs row's timing */
+  #tabs .tab-btn:nth-child(6n+2){ animation-delay:.5s; }
+  #tabs .tab-btn:nth-child(6n+3){ animation-delay:1s; }
+  #tabs .tab-btn:nth-child(6n+4){ animation-delay:1.5s; }
+  #tabs .tab-btn:nth-child(6n+5){ animation-delay:2s; }
+  #tabs .tab-btn:nth-child(6n+6){ animation-delay:2.5s; }
+  /* type-filters row: own independent 4.5s cycle (0.5s per chip), unrelated to the tabs row's timing */
   #typeFilters .chip{
-    animation-name: spotlightPulse;
-    animation-duration: 9s;
+    animation-name: spotlightColorChip;
+    animation-duration: 4.5s;
     animation-timing-function: ease-out;
     animation-iteration-count: infinite;
-    border-radius:20px;
   }
+  #typeFilters .chip.active{ animation:none; }
   #typeFilters .chip:nth-child(9n+1){ animation-delay:0s; }
-  #typeFilters .chip:nth-child(9n+2){ animation-delay:1s; }
-  #typeFilters .chip:nth-child(9n+3){ animation-delay:2s; }
-  #typeFilters .chip:nth-child(9n+4){ animation-delay:3s; }
-  #typeFilters .chip:nth-child(9n+5){ animation-delay:4s; }
-  #typeFilters .chip:nth-child(9n+6){ animation-delay:5s; }
-  #typeFilters .chip:nth-child(9n+7){ animation-delay:6s; }
-  #typeFilters .chip:nth-child(9n+8){ animation-delay:7s; }
-  #typeFilters .chip:nth-child(9n+9){ animation-delay:8s; }
+  #typeFilters .chip:nth-child(9n+2){ animation-delay:.5s; }
+  #typeFilters .chip:nth-child(9n+3){ animation-delay:1s; }
+  #typeFilters .chip:nth-child(9n+4){ animation-delay:1.5s; }
+  #typeFilters .chip:nth-child(9n+5){ animation-delay:2s; }
+  #typeFilters .chip:nth-child(9n+6){ animation-delay:2.5s; }
+  #typeFilters .chip:nth-child(9n+7){ animation-delay:3s; }
+  #typeFilters .chip:nth-child(9n+8){ animation-delay:3.5s; }
+  #typeFilters .chip:nth-child(9n+9){ animation-delay:4s; }
 
 
   /* ---------- main ---------- */
