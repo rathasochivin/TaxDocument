@@ -256,6 +256,12 @@
     5%       { color:var(--maroon); }
     9%       { color:var(--ink-soft); }
   }
+  /* pause decorative animations while searching, to keep typing smooth on desktop */
+  body.is-searching #tabs .tab-btn,
+  body.is-searching #typeFilters .chip,
+  body.is-searching .rsc-3d span{
+    animation-play-state: paused !important;
+  }
   /* tabs row: 6 items, own independent 6s cycle (1s per tab) */
   #tabs .tab-btn{
     animation-name: spotlightColorTab;
@@ -3813,6 +3819,10 @@ initPanels();
   });
   input.addEventListener('focus', function(){
     if(input.value.trim()) renderSuggestions();
+    document.body.classList.add('is-searching');
+  });
+  input.addEventListener('blur', function(){
+    document.body.classList.remove('is-searching');
   });
   input.addEventListener('keydown', function(e){
     if(e.key === 'Escape') closeSuggestions();
