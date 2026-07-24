@@ -658,18 +658,27 @@
 </div>
 <script>
 (function(){
-  var supportBtn = document.getElementById('vgSupportBtn');
-  var overlay = document.getElementById('vgSupportOverlay');
-  var frame = document.getElementById('vgSupportFrame');
-  var closeBtn = document.getElementById('vgSupportClose');
-  if(!supportBtn) return;
-  supportBtn.addEventListener('click', function(){
-    if(!frame.src){ frame.src = 'pricing.html'; }
-    overlay.style.display = 'flex';
-  });
-  closeBtn.addEventListener('click', function(){ overlay.style.display = 'none'; });
-  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.style.display = 'none'; });
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') overlay.style.display = 'none'; });
+  function initSupportModal(){
+    var overlay = document.getElementById('vgSupportOverlay');
+    var frame = document.getElementById('vgSupportFrame');
+    var closeBtn = document.getElementById('vgSupportClose');
+    var openBtns = [document.getElementById('vgSupportBtn'), document.getElementById('vgSupportBtnTop')];
+    function openModal(){
+      if(!frame.src){ frame.src = 'pricing.html'; }
+      overlay.style.display = 'flex';
+    }
+    openBtns.forEach(function(btn){
+      if(btn) btn.addEventListener('click', openModal);
+    });
+    closeBtn.addEventListener('click', function(){ overlay.style.display = 'none'; });
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.style.display = 'none'; });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') overlay.style.display = 'none'; });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initSupportModal);
+  } else {
+    initSupportModal();
+  }
 })();
 </script>
 
@@ -1024,6 +1033,7 @@
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
   <button type="button" class="app-switch-btn" id="switchToFx">$⇄៛</button>
+  <button type="button" id="vgSupportBtnTop" style="margin-left:8px; background:transparent; color:#F1E6CE; border:1px solid #C7A252; border-radius:20px; padding:6px 14px; font-size:12.5px; cursor:pointer; white-space:nowrap;">💛 គាំទ្រពួកយើង</button>
   <div class="author-line rsc-3d" style="margin-left:auto;"><span class="rsc-r">R</span><span class="rsc-s">S</span><span class="rsc-c">C</span></div>
   <div class="access-badge" id="accessBadge" style="display:none;">
     <span class="ab-time" id="accessTime">—</span>
