@@ -108,6 +108,20 @@
     font-size:11.5px; color:#E4D6A8; letter-spacing:.02em;
     font-weight:400; line-height:1.5; text-align:center;
   }
+  .support-us-btn{
+    font-family:'Luckiest Guy','Arial Black','Segoe UI',sans-serif;
+    font-weight:400; letter-spacing:.03em;
+    background:linear-gradient(100deg,#FF6B6B 0%,#FFD93D 33%,#FFD93D 66%,#6BCB77 100%);
+    background-size:250% 100%;
+    color:#fff;
+    text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 3px rgba(0,0,0,.35);
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.35), 0 4px 10px -2px rgba(0,0,0,.4);
+    animation: supportHighlight 5s linear infinite;
+  }
+  @keyframes supportHighlight{
+    0%{ background-position: 0% 50%; }
+    100%{ background-position: 200% 50%; }
+  }
   .rsc-3d{
     font-family:'Luckiest Guy','Arial Black','Segoe UI',sans-serif;
     font-size:32px; font-weight:400; letter-spacing:.04em;
@@ -611,7 +625,7 @@
       <button id="vgRequestBtn" type="button" disabled>ស្នើសុំចូលមើល</button>
       <div class="vg-error" id="vgErrorRequest">មានបញ្ហាក្នុងការតភ្ជាប់។ សូមព្យាយាមម្តងទៀត។</div>
       <div style="margin-top:18px; padding-top:14px; border-top:1px solid #EBE5D6;">
-        <button id="vgSupportBtn" type="button" style="background:transparent;color:#7A2B24;border:1px solid #C7A252;">💛 គាំទ្រពួកយើង</button>
+        <button id="vgSupportBtn" type="button" class="support-us-btn" style="border:none; border-radius:20px; padding:10px 22px; font-size:14px; cursor:pointer;">💛 Support Us</button>
       </div>
     </div>
 
@@ -1033,7 +1047,7 @@
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
   <button type="button" class="app-switch-btn" id="switchToFx">$⇄៛</button>
-  <button type="button" id="vgSupportBtnTop" style="margin-left:8px; background:transparent; color:#F1E6CE; border:1px solid #C7A252; border-radius:20px; padding:6px 14px; font-size:12.5px; cursor:pointer; white-space:nowrap;">💛 គាំទ្រពួកយើង</button>
+  <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:8px; border:none; border-radius:20px; padding:6px 16px; font-size:13px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
   <div class="author-line rsc-3d" style="margin-left:auto;"><span class="rsc-r">R</span><span class="rsc-s">S</span><span class="rsc-c">C</span></div>
   <div class="access-badge" id="accessBadge" style="display:none;">
     <span class="ab-time" id="accessTime">—</span>
