@@ -169,7 +169,7 @@
     padding:5px 12px;
   }
   .ab-time{
-    font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
+    font-family:'IBM Plex Mono','Space Grotesk',monospace;
     font-size:14px; font-weight:700; color:#F7EFDD;
     letter-spacing:.02em;
   }
@@ -739,7 +739,7 @@
     function tick(){
       var diffMs = expiresAt - Date.now();
       if(diffMs <= 0){
-        accessTimeEl.textContent = 'ផុតកំណត់';
+        accessTimeEl.textContent = 'Expired';
         clearInterval(countdownTimer);
         countdownTimer = null;
         return;
@@ -749,9 +749,9 @@
       var hours = Math.floor((totalMinutes % 1440) / 60);
       var minutes = totalMinutes % 60;
       var parts = [];
-      if(days > 0) parts.push(days + ' ថ្ងៃ');
-      if(days > 0 || hours > 0) parts.push(hours + ' ម៉ោង');
-      parts.push(minutes + ' នាទី');
+      if(days > 0) parts.push(days + 'd');
+      if(days > 0 || hours > 0) parts.push(hours + 'h');
+      parts.push(minutes + 'm');
       accessTimeEl.textContent = parts.join(' ');
     }
     tick();
@@ -1068,9 +1068,8 @@
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
   <button type="button" class="app-switch-btn" id="switchToFx">$⇄៛</button>
-  <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:8px; border:none; border-radius:20px; padding:6px 16px; font-size:13px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
-  <div class="author-line rsc-3d" style="margin-left:auto;"><span class="rsc-r">R</span><span class="rsc-s">S</span><span class="rsc-c">C</span><span class="rsc-x">✦</span></div>
-  <div class="access-badge" id="accessBadge" style="display:none;">
+  <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:8px; border:none; border-radius:16px; padding:4px 11px; font-size:11px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
+  <div class="access-badge" id="accessBadge" style="display:none; margin-left:auto;">
     <span class="ab-time" id="accessTime">—</span>
   </div>
 </div>
@@ -2048,7 +2047,6 @@ initPanels();
 
   <div class="filters-sticky" id="filtersSticky">
     <div class="filters" id="typeFilters"></div>
-    <div class="filters" id="statusFilters"></div>
   </div>
 </div>
 
@@ -3428,6 +3426,7 @@ initPanels();
   }
   function renderStatusFilters(){
     var el = document.getElementById('statusFilters');
+    if(!el) return; // ជួរស្ថានភាព (សុពលភាព/និរាករណ៍) ត្រូវបានលុបចេញ
     if(state.tab !== 'law'){ el.classList.add('hidden'); el.innerHTML=''; return; }
     el.classList.remove('hidden');
     var prevScroll = el.scrollLeft;
