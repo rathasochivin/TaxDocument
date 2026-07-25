@@ -1188,12 +1188,13 @@
     border-bottom:2px solid #C7A252;
   }
   .app-switch-btn{
-    flex:0 1 auto; min-height:38px; max-width:280px;
+    flex:0 1 auto; height:38px; max-width:280px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Khmer OS Muol Light','Moul', sans-serif; font-size:13px; font-weight:700;
     line-height:1.35; white-space:normal; word-break:keep-all; overflow-wrap:normal;
-    padding:8px 18px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
+    padding:0 18px; border-radius:8px; border:1px solid rgba(244,239,226,0.25);
     background:transparent; color:#CFC8B4; cursor:pointer; text-align:center;
+    box-sizing:border-box;
     transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
   .app-switch-btn.active{
@@ -1201,13 +1202,13 @@
     font-weight:900; text-shadow:0 1px 2px rgba(0,0,0,.4), 0 0 8px rgba(247,212,136,.5);
   }
   #switchToFx{
-    padding:6px 14px;
+    padding:0 14px;
     background:rgba(255,255,255,.08);
     border:1.5px solid rgba(255,255,255,.35);
   }
   #switchToFx.active{ background:rgba(255,255,255,.08); }
   .fx-swap-icon{
-    width:34px; height:34px; display:block;
+    width:24px; height:24px; display:block;
     animation: fxSwap3D 4s ease-in-out infinite;
   }
   @keyframes fxSwap3D{
@@ -1216,9 +1217,9 @@
   }
   body.is-searching .fx-swap-icon{ animation-play-state: paused; }
   @media (max-width:420px){
-    .app-switch-btn{ padding:8px 12px; font-size:12px; }
-    #switchToFx{ padding:6px 10px; }
-    .fx-swap-icon{ width:28px; height:28px; }
+    .app-switch-btn{ padding:0 12px; font-size:12px; }
+    #switchToFx{ padding:0 10px; }
+    .fx-swap-icon{ width:20px; height:20px; }
     .access-badge{ padding:4px 8px; }
     .ab-time{ font-size:12px; }
   }
@@ -4394,7 +4395,7 @@ initPanels();
   #sourceMarquee .marquee-track{
     display:inline-block;
     font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
-    font-size:10.5px; color:#E4D6A8; letter-spacing:.02em;
+    font-size:14px; color:#E4D6A8; letter-spacing:.02em;
     animation: sourceMarqueeScroll 15s linear infinite;
     will-change: transform;
   }
