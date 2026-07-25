@@ -2151,7 +2151,7 @@ initPanels();
 (function(){
   var switchToTax = document.getElementById('switchToTax');
   var switchToFx  = document.getElementById('switchToFx');
-  var ifrsTabBtn  = document.getElementById('ifrsTabBtn');
+  var ifrsTabBtn  = null;
   var fxOverlay   = document.getElementById('fxOverlay');
   var fxBackBtn   = document.getElementById('fxBackBtn');
   var ifrsOverlay = document.getElementById('ifrsOverlay');
@@ -2193,9 +2193,18 @@ initPanels();
   }
 
   switchToFx.addEventListener('click', openFx);
-  if(ifrsTabBtn) ifrsTabBtn.addEventListener('click', openIfrs);
   switchToTax.addEventListener('click', closeFx);
   fxBackBtn.addEventListener('click', closeFx);
+
+  function wireIfrsTabBtn(){
+    ifrsTabBtn = document.getElementById('ifrsTabBtn');
+    if(ifrsTabBtn) ifrsTabBtn.addEventListener('click', openIfrs);
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', wireIfrsTabBtn);
+  } else {
+    wireIfrsTabBtn();
+  }
   ifrsBackBtn.addEventListener('click', closeFx);
 })();
 </script>
