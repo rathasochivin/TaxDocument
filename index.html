@@ -833,14 +833,23 @@
 
   function unlock(id, expiresAt){
     if(pollTimer) clearInterval(pollTimer);
-    showCongrats(expiresAt, function(){
+    var celebrateKey = 'vg_celebrated_' + id;
+    var alreadyCelebrated = false;
+    try{ alreadyCelebrated = localStorage.getItem(celebrateKey) === '1'; }catch(e){}
+    function finishUnlock(){
       body.classList.remove('vg-locked');
       guardEl.style.display = 'none';
       startCountdown(expiresAt);
       if(window.__initTaxApp) window.__initTaxApp();
       // បន្តពិនិត្យស្ថានភាពក្នុងផ្ទៃខាងក្រោយ ដើម្បីអោយម្ចាស់ឯកសារអាចផ្តាច់សិទ្ធិបានទាំងពេលកំពុងបើកមើលស្រាប់
       watchStatus(id);
-    });
+    }
+    if(alreadyCelebrated){
+      finishUnlock();
+    } else {
+      try{ localStorage.setItem(celebrateKey, '1'); }catch(e){}
+      showCongrats(expiresAt, finishUnlock);
+    }
   }
 
   function watchStatus(id){
@@ -1000,7 +1009,8 @@
     // ប្រសិនបើធ្លាប់ស្នើសុំរួច (id ចាស់ក្នុង browser នេះ) ពិនិត្យស្ថានភាពភ្លាមៗ
     var existingId = localStorage.getItem(STORAGE_KEY);
     if(existingId && APPS_SCRIPT_URL.indexOf('PASTE_YOUR') !== 0){
-      showStep(stepWaiting);
+      // ស្ថិតនៅ stepChecking (spinner ធម្មតា) រហូតដល់ដឹងច្បាស់ស្ថានភាព — កុំបង្ហាញ "Waiting for
+      // Approval" ភ្លាមៗ ព្រោះករណីភាគច្រើនគឺបានអនុញ្ញាតរួចហើយពីមុន (refresh ធម្មតា)
       fetch(APPS_SCRIPT_URL + '?action=status&id=' + encodeURIComponent(existingId))
         .then(function(r){ return r.json(); })
         .then(function(data){
@@ -1013,10 +1023,11 @@
             localStorage.removeItem(STORAGE_KEY);
             showStep(stepExpired);
           } else {
+            showStep(stepWaiting);
             pollStatus(existingId);
           }
         })
-        .catch(function(){ pollStatus(existingId); });
+        .catch(function(){ showStep(stepWaiting); pollStatus(existingId); });
     } else {
       showStep(stepRequest);
     }
@@ -1103,18 +1114,18 @@
   }
   #switchToFx.active{ background:rgba(255,255,255,.08); }
   .fx-swap-icon{
-    width:26px; height:26px; display:block;
-    animation: fxSwapSpin 6s linear infinite;
+    width:34px; height:34px; display:block;
+    animation: fxSwap3D 4s ease-in-out infinite;
   }
-  @keyframes fxSwapSpin{
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  @keyframes fxSwap3D{
+    0%, 100% { transform: perspective(220px) rotateY(0deg); }
+    50%      { transform: perspective(220px) rotateY(180deg); }
   }
   body.is-searching .fx-swap-icon{ animation-play-state: paused; }
   @media (max-width:420px){
     .app-switch-btn{ padding:8px 12px; font-size:12px; }
     #switchToFx{ padding:6px 10px; }
-    .fx-swap-icon{ width:22px; height:22px; }
+    .fx-swap-icon{ width:28px; height:28px; }
     .access-badge{ padding:4px 8px; }
     .ab-time{ font-size:12px; }
   }
@@ -1219,8 +1230,8 @@
     </svg>
   </button>
   
-  <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:8px; border:none; border-radius:16px; padding:4px 11px; font-size:11px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
-  <div class="access-badge" id="accessBadge" style="display:none; margin-left:auto;">
+  <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:auto; border:none; border-radius:16px; padding:4px 11px; font-size:11px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
+  <div class="access-badge" id="accessBadge" style="display:none;">
     <span class="ab-time" id="accessTime">—</span>
   </div>
 </div>
@@ -4291,21 +4302,21 @@ initPanels();
 
 <style>
   #sourceMarquee{
-    position:fixed; left:0; right:0; bottom:0; z-index:9500;
     background:linear-gradient(180deg, #0F4B3E 0%, #0A342A 100%);
-    border-top:2px solid #C7A252;
-    padding:6px 0;
+    padding:4px 0;
+    margin-top:6px;
+    border-radius:6px;
     overflow:hidden;
     white-space:nowrap;
   }
   #sourceMarquee .marquee-track{
     display:inline-block;
     font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
-    font-size:13px; color:#E4D6A8; letter-spacing:.02em;
+    font-size:10.5px; color:#E4D6A8; letter-spacing:.02em;
     animation: sourceMarqueeScroll 15s linear infinite;
     will-change: transform;
   }
-  #sourceMarquee .marquee-track span{ padding:0 40px; }
+  #sourceMarquee .marquee-track span{ padding:0 30px; }
   @keyframes sourceMarqueeScroll{
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
@@ -4313,15 +4324,16 @@ initPanels();
   body.is-searching #sourceMarquee{ display:none; }
   body.vg-locked #sourceMarquee{ display:none; }
   body.overlay-open #sourceMarquee{ display:none; }
-  main{ padding-bottom:44px; }
   @media (max-width:600px){
-    #sourceMarquee .marquee-track{ font-size:11.5px; }
+    #sourceMarquee .marquee-track{ font-size:9.5px; }
   }
 </style>
 <script>
 (function(){
   function addSourceMarquee(){
     if(document.getElementById('sourceMarquee')) return;
+    var searchBar = document.getElementById('searchBar');
+    if(!searchBar) return;
     var bar = document.createElement('div');
     bar.id = 'sourceMarquee';
     var track = document.createElement('div');
@@ -4332,7 +4344,7 @@ initPanels();
     track.appendChild(s1);
     track.appendChild(s2);
     bar.appendChild(track);
-    document.body.appendChild(bar);
+    searchBar.appendChild(bar);
   }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', addSourceMarquee);
