@@ -138,15 +138,17 @@
   }
   @keyframes rscLetterColor{
     0%   { color:#FF6B6B; }
-    25%  { color:#FFD93D; }
-    50%  { color:#6BCB77; }
-    75%  { color:#4DA6FF; }
+    20%  { color:#FFD93D; }
+    40%  { color:#6BCB77; }
+    60%  { color:#4DA6FF; }
+    80%  { color:#C77DFF; }
     100% { color:#FF6B6B; }
   }
   .rsc-3d span{ animation: rscLetterColor 4s linear infinite; }
   .rsc-r{ animation-delay:0s; }
   .rsc-s{ animation-delay:.4s; }
   .rsc-c{ animation-delay:.8s; }
+  .rsc-x{ animation-delay:1.2s; font-size:.8em; vertical-align:middle; }
   @keyframes rscMove{
     0%{ transform: translate(-4px, 0); }
     25%{ transform: translate(0, -2px); }
@@ -270,10 +272,14 @@
     5%       { color:var(--maroon); }
     9%       { color:var(--ink-soft); }
   }
-  /* pause decorative animations while searching, to keep typing smooth on desktop */
+  /* pause ALL decorative animations while searching, to keep typing smooth on both mobile and desktop */
   body.is-searching #tabs .tab-btn,
   body.is-searching #typeFilters .chip,
-  body.is-searching .rsc-3d span{
+  body.is-searching .rsc-3d,
+  body.is-searching .rsc-3d span,
+  body.is-searching .app-switch-btn.active,
+  body.is-searching #switchToFx,
+  body.is-searching .support-us-btn{
     animation-play-state: paused !important;
   }
   /* tabs row: 6 items, own independent 6s cycle (1s per tab) */
@@ -1007,8 +1013,22 @@
   }
   .app-switch-btn.active{
     background:#C7A252; color:#1B2C3B; border-color:#C7A252;
+    font-weight:900; text-shadow:0 1px 0 rgba(255,255,255,.35);
+    animation: activeTabGlow 2.4s ease-in-out infinite;
   }
-  #switchToFx{ font-size:14px; }
+  @keyframes activeTabGlow{
+    0%, 100% { box-shadow:0 0 0 0 rgba(199,162,82,.55); }
+    50%      { box-shadow:0 0 10px 3px rgba(199,162,82,.55); }
+  }
+  #switchToFx{
+    font-size:15px;
+    font-family:'Luckiest Guy','Khmer OS Muol Light','Moul', sans-serif;
+    background:linear-gradient(100deg,#4DA6FF 0%,#8FE3D0 33%,#FFD93D 66%,#4DA6FF 100%);
+    background-size:250% 100%;
+    color:#0F2A3D; border-color:rgba(255,255,255,.35);
+    animation: supportHighlight 5s linear infinite;
+  }
+  #switchToFx.active{ color:#0F2A3D; }
   @media (max-width:420px){
     .app-switch-btn{ padding:8px 12px; font-size:12px; }
     #switchToFx{ font-size:13px; }
@@ -1039,7 +1059,7 @@
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
   <button type="button" class="app-switch-btn" id="switchToFx">$⇄៛</button>
   <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:8px; border:none; border-radius:20px; padding:6px 16px; font-size:13px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
-  <div class="author-line rsc-3d" style="margin-left:auto;"><span class="rsc-r">R</span><span class="rsc-s">S</span><span class="rsc-c">C</span></div>
+  <div class="author-line rsc-3d" style="margin-left:auto;"><span class="rsc-r">R</span><span class="rsc-s">S</span><span class="rsc-c">C</span><span class="rsc-x">✦</span></div>
   <div class="access-badge" id="accessBadge" style="display:none;">
     <span class="ab-time" id="accessTime">—</span>
   </div>
@@ -3301,23 +3321,24 @@ initPanels();
         id:'law'+i,
         cls: typeClassFor(d.type),
         statusCls: statusClassFor(d.statusMain),
-        searchBlob:normDigits((d.type+' '+d.docNo+' '+d.title).toLowerCase())
+        searchBlob:normDigits((d.type+' '+d.docNo+' '+d.title).toLowerCase()),
+        _titleNorm: normDigits((d.title||'').toLowerCase())
       });
     });
     reg = DATA.reg.map(function(d,i){
-      return Object.assign({}, d, {id:'reg'+i, searchBlob:normDigits((d.title+' '+d.date).toLowerCase())});
+      return Object.assign({}, d, {id:'reg'+i, searchBlob:normDigits((d.title+' '+d.date).toLowerCase()), _titleNorm: normDigits((d.title||'').toLowerCase())});
     });
     dta = DATA.dta.map(function(d,i){
-      return Object.assign({}, d, {id:'dta'+i, searchBlob:normDigits((d.title+' '+d.date).toLowerCase())});
+      return Object.assign({}, d, {id:'dta'+i, searchBlob:normDigits((d.title+' '+d.date).toLowerCase()), _titleNorm: normDigits((d.title||'').toLowerCase())});
     });
     types = TYPES_DATA.map(function(d,i){
-      return Object.assign({}, d, {id:'type'+i, searchBlob:normDigits((d.titleKh+' '+d.titleEn+' '+d.date).toLowerCase())});
+      return Object.assign({}, d, {id:'type'+i, searchBlob:normDigits((d.titleKh+' '+d.titleEn+' '+d.date).toLowerCase()), _titleNorm: normDigits((d.titleKh||'').toLowerCase())});
     });
     payer = PAYER_DATA.map(function(d,i){
-      return Object.assign({}, d, {id:'payer'+i, searchBlob:normDigits((d.titleKh+' '+d.titleEn).toLowerCase())});
+      return Object.assign({}, d, {id:'payer'+i, searchBlob:normDigits((d.titleKh+' '+d.titleEn).toLowerCase()), _titleNorm: normDigits((d.titleKh||'').toLowerCase())});
     });
     glossary = GLOSSARY_DATA.map(function(d,i){
-      return Object.assign({}, d, {id:'glossary'+i, searchBlob:normDigits((d.titleKh+' '+d.titleEn+' '+d.definition).toLowerCase())});
+      return Object.assign({}, d, {id:'glossary'+i, searchBlob:normDigits((d.titleKh+' '+d.titleEn+' '+d.definition).toLowerCase()), _titleNorm: normDigits((d.titleKh||'').toLowerCase())});
     });
 
     document.getElementById('cnt-law').textContent = law.length;
@@ -3820,7 +3841,8 @@ initPanels();
     for(var i=0; i<records.length; i++){
       var title = records[i][field];
       if(!title) continue;
-      var idx = normDigits(title.toLowerCase()).indexOf(qLower);
+      var norm = records[i]._titleNorm !== undefined ? records[i]._titleNorm : normDigits(title.toLowerCase());
+      var idx = norm.indexOf(qLower);
       if(idx === -1) continue;
       if(seen[title]) continue;
       seen[title] = true;
