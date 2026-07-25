@@ -3823,14 +3823,17 @@ initPanels();
     renderStatusFilters();
     render();
   });
-  document.getElementById('statusFilters').addEventListener('click', function(e){
-    var btn = e.target.closest('.chip'); if(!btn) return;
-    var s = btn.getAttribute('data-status');
-    state.activeStatus = (state.activeStatus === s) ? null : (s ? s : null);
-    renderTypeFilters();
-    renderStatusFilters();
-    render();
-  });
+  var statusFiltersEl = document.getElementById('statusFilters');
+  if(statusFiltersEl){
+    statusFiltersEl.addEventListener('click', function(e){
+      var btn = e.target.closest('.chip'); if(!btn) return;
+      var s = btn.getAttribute('data-status');
+      state.activeStatus = (state.activeStatus === s) ? null : (s ? s : null);
+      renderTypeFilters();
+      renderStatusFilters();
+      render();
+    });
+  }
 
   // ---------- search ----------
   var debounceTimer;
