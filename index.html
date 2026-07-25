@@ -1493,13 +1493,19 @@
     display:block; margin-top:6px; color:var(--brand-2); font-weight:500;
   }
 
-  /* INTL INTEREST RATE NOTES */
+  /* INTL INTEREST RATE PANEL — headers use Khmer OS Muol Light, body text uses Khmer OS Siemreap */
+  #panel-intl, #panel-intl table, #panel-intl td, #panel-intl th, #panel-intl li{
+    font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
+  }
+  #panel-intl .pln-title, #panel-intl .intl-notes-title{
+    font-family:'Khmer OS Muol Light','Moul','Noto Serif Khmer',serif;
+  }
   .intl-notes{
     margin-top:16px; padding:14px 16px;
     background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
   }
   .intl-notes-title{
-    font-family:'Moul','Noto Serif Khmer',serif; font-weight:400; font-size:13.5px;
+    font-weight:400; font-size:13.5px;
     color:var(--brand); margin:0 0 8px;
   }
   .intl-notes ul{ margin:0; padding-left:18px; }
@@ -1711,7 +1717,7 @@
     <button class="tab-btn" data-tab="salary">អត្រាប្តូរប្រាក់_បៀវត្ស</button>
     <button class="tab-btn" data-tab="normal">អត្រាប្តូរប្រាក់ប្រចាំខែ</button>
     <button class="tab-btn" data-tab="interest">អត្រាការប្រាក់កម្ចី</button>
-    <button class="tab-btn" data-tab="intl">អត្រាការប្រាក់អន្តរជាតិ</button>
+    <button class="tab-btn" data-tab="intl">អត្រាការប្រាក់អន្តរជាតិប្រចាំឆ្នាំ</button>
   </div>
 
   <!-- PANEL 1: ANNUAL -->
@@ -1790,7 +1796,7 @@
   <section class="panel" id="panel-intl">
     <div class="panel-law-note">
       <div class="pln-body">
-        <p class="pln-title">អត្រាការប្រាក់អន្តរជាតិ (LIBOR / SIBOR → SOFR / SORA)</p>
+        <p class="pln-title" style="font-family:'Khmer OS Muol Light','Moul','Noto Serif Khmer',serif;">អត្រាការប្រាក់អន្តរជាតិប្រចាំឆ្នាំ (LIBOR / SIBOR → SOFR / SORA)</p>
         <p>អត្រាមូលដ្ឋានអន្តរជាតិសម្រាប់កំណត់ការប្រាក់លើកម្ចី-មូលបត្រជារូបិយប័ណ្ណបរទេស។ LIBOR និង SIBOR ត្រូវបានបញ្ឈប់ទាំងស្រុងចាប់ពីចុងឆ្នាំ ២០២៤ ជំនួសដោយ SOFR/SORA។</p>
       </div>
     </div>
