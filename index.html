@@ -3946,5 +3946,38 @@ initPanels();
   window.__initTaxApp = initApp;
 })();
 </script>
+
+<style>
+  #sourceMarquee{
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:linear-gradient(180deg, #0F4B3E 0%, #0A342A 100%);
+    border-top:2px solid #C7A252;
+    padding:6px 0;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  #sourceMarquee .marquee-track{
+    display:inline-block;
+    font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
+    font-size:13px; color:#E4D6A8; letter-spacing:.02em;
+    animation: sourceMarqueeScroll 22s linear infinite;
+    will-change: transform;
+  }
+  #sourceMarquee .marquee-track span{ padding:0 40px; }
+  @keyframes sourceMarqueeScroll{
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  body.is-searching #sourceMarquee{ display:none; }
+  main{ padding-bottom:44px; }
+  @media (max-width:600px){
+    #sourceMarquee .marquee-track{ font-size:11.5px; }
+  }
+</style>
+<div id="sourceMarquee">
+  <div class="marquee-track">
+    <span>📄 ឯកសារប្រភពដើមពីគេហទំព័រអគ្គនាយកដ្ឋានពន្ធដារ (tax.gov.kh)</span><span>📄 ឯកសារប្រភពដើមពីគេហទំព័រអគ្គនាយកដ្ឋានពន្ធដារ (tax.gov.kh)</span>
+  </div>
+</div>
 </body>
 </html>
