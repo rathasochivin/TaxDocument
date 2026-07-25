@@ -199,7 +199,7 @@
 
   /* ---------- Search Bar ---------- */
   .search-bar{
-    max-width:1400px;margin:14px auto 0; padding-bottom:16px;
+    max-width:1400px;margin:14px auto 0; padding-bottom:6px;
     position:relative;
   }
   .search-wrap{
@@ -514,7 +514,7 @@
   #dateRateMarquee .drm-track{
     display:inline-block;
     font-family:'Khmer OS Muol Light','Moul',serif;
-    font-weight:400; font-size:11px; letter-spacing:.01em;
+    font-weight:400; font-size:8px; letter-spacing:.01em;
     color:#F1E6CE;
     animation: drmScroll 26s linear infinite;
     will-change: transform;
@@ -527,7 +527,7 @@
   body.is-searching #dateRateMarquee{ display:none !important; }
   body.overlay-open #dateRateMarquee{ display:none !important; }
   @media (max-width:600px){
-    #dateRateMarquee .drm-track{ font-size:9.5px; }
+    #dateRateMarquee .drm-track{ font-size:7px; }
   }
 </style>
 <div id="dateRateMarquee">
@@ -2496,10 +2496,6 @@ initPanels();
 </div>
 
 <main>
-  <div class="meta-row" id="metaRow">
-    <span id="totalLabel"></span>
-    <span id="filteredLabel"></span>
-  </div>
   <div id="resultsList" class="results-list"></div>
   <div id="emptyState" class="empty-state" style="display:none;">
     <div class="glyph">&#128269;</div>
@@ -4196,8 +4192,6 @@ initPanels();
   var listEl = document.getElementById('resultsList');
   var emptyEl = document.getElementById('emptyState');
   var emptyQueryEl = document.getElementById('emptyQuery');
-  var filteredLabelEl = document.getElementById('filteredLabel');
-  var totalLabelEl = document.getElementById('totalLabel');
   var footerEl = document.getElementById('resultsFooter');
   var input = document.getElementById('searchInput');
   var clearBtn = document.getElementById('clearBtn');
@@ -4215,12 +4209,7 @@ initPanels();
     var q = normDigits(state.query.trim().toLowerCase());
     var terms = q.length ? q.split(/\s+/).filter(Boolean) : [];
 
-    totalLabelEl.textContent = 'សរុប ' + records.length + ' ' + labelForTab[state.tab];
-
     var matches = records.filter(function(r){ return matchesFilters(r, terms); });
-
-    var hasActiveFilter = terms.length || state.activeType !== null || state.activeStatus !== null;
-    filteredLabelEl.textContent = hasActiveFilter ? ('ត្រូវនឹងលទ្ធផល ' + matches.length + ' កន្លែង') : '';
 
     if(!matches.length){
       listEl.innerHTML = '';
