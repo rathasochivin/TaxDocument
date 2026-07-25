@@ -500,6 +500,99 @@
 </head>
 <body>
 
+<script src="https://cdn.jsdelivr.net/gh/ThyrithSor/momentkh@3.0.3/momentkh.js"></script>
+<style>
+  #dateRateMarquee{
+    position:sticky; top:0; z-index:60;
+    background:linear-gradient(180deg, #1B2C3B 0%, #0F1C28 100%);
+    border-bottom:1.5px solid #C7A252;
+    padding:4px 0;
+    overflow:hidden;
+    white-space:nowrap;
+    display:none; /* JS បង្ហាញបន្ទាប់ពីគណនាកាលបរិច្ឆេទរួច */
+  }
+  #dateRateMarquee .drm-track{
+    display:inline-block;
+    font-family:'Khmer OS Muol Light','Moul',serif;
+    font-weight:400; font-size:11px; letter-spacing:.01em;
+    color:#F1E6CE;
+    animation: drmScroll 26s linear infinite;
+    will-change: transform;
+  }
+  #dateRateMarquee .drm-track span{ padding:0 36px; }
+  @keyframes drmScroll{
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  body.is-searching #dateRateMarquee{ display:none !important; }
+  body.overlay-open #dateRateMarquee{ display:none !important; }
+  @media (max-width:600px){
+    #dateRateMarquee .drm-track{ font-size:9.5px; }
+  }
+</style>
+<div id="dateRateMarquee">
+  <div class="drm-track" id="drmTrack"></div>
+</div>
+<script>
+(function(){
+  // ============================================================
+  // អត្រាប្តូរប្រាក់ USD→រៀល ប្រចាំថ្ងៃ (NBC) — បន្ថែមកាលបរិច្ឆេទ/អត្រាថ្មីនៅទីនេះជារៀងរាល់ថ្ងៃ
+  // ទម្រង់៖ "YYYY-M-D": អត្រា — បើថ្ងៃណាមិនទាន់បញ្ចូល ប្រព័ន្ធនឹងយកអត្រាថ្ងៃជិតបំផុតពីមុន
+  // ស្វ័យប្រវត្តិ (ដូច្នេះថ្ងៃសៅរ៍/អាទិត្យគ្មានទិន្នន័យ នឹងបង្ហាញអត្រាថ្ងៃសុក្រដោយស្វ័យប្រវត្តិ)
+  // ============================================================
+  var EXCHANGE_RATE_DAILY = {
+    "2026-7-25": 4000
+  };
+
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  function dateKey(d){ return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
+
+  function findLatestRate(fromDate){
+    var d = new Date(fromDate.getTime());
+    for(var i = 0; i < 14; i++){ // ស្វែងរកថយក្រោយបានដល់ ១៤ថ្ងៃ
+      var key = dateKey(d);
+      if(EXCHANGE_RATE_DAILY.hasOwnProperty(key)) return EXCHANGE_RATE_DAILY[key];
+      d.setDate(d.getDate() - 1);
+    }
+    return null;
+  }
+
+  function toKhmerDigits(n){
+    var map = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
+    return String(n).replace(/[0-9]/g, function(ch){ return map[+ch]; });
+  }
+
+  function renderDateRateBar(){
+    var el = document.getElementById('dateRateMarquee');
+    var track = document.getElementById('drmTrack');
+    if(!el || !track) return;
+    var now = new Date();
+    var gregorianText;
+    try{
+      var khmer = momentkh.fromDate(now);
+      gregorianText = momentkh.format(khmer, "ថ្ងៃW ទីDs ខែM គ.ស. c ត្រូវនឹងថ្ងៃ dN ខែm ឆ្នាំa e ព.ស. b");
+    }catch(e){
+      gregorianText = '';
+    }
+    var rate = findLatestRate(now);
+    var rateText = rate ? ('អត្រាប្តូរប្រាក់ថ្ងៃនេះ 1$ = ' + toKhmerDigits(rate) + ' រៀល') : '';
+    var text = '🗓️ ' + gregorianText + (rateText ? ' · 💱 ' + rateText : '');
+    track.innerHTML = '';
+    var s1 = document.createElement('span'); s1.textContent = text;
+    var s2 = document.createElement('span'); s2.textContent = text;
+    track.appendChild(s1);
+    track.appendChild(s2);
+    el.style.display = 'block';
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderDateRateBar);
+  } else {
+    renderDateRateBar();
+  }
+})();
+</script>
+
 <!-- ==========================================================================
      ម៉ូតថែទាំគេហទំព័រ (Maintenance Mode)
      ចង់បិទគេហទំព័រជាបណ្តោះអាសន្នសម្រាប់អ្នកប្រើប្រាស់ទាំងអស់ (ដើម្បីធ្វើបច្ចុប្បន្នភាព)?
