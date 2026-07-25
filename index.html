@@ -1030,18 +1030,24 @@
     font-weight:900; text-shadow:0 1px 2px rgba(0,0,0,.4), 0 0 8px rgba(247,212,136,.5);
   }
   #switchToFx{
-    font-size:15px;
-    font-family:'Luckiest Guy','Khmer OS Muol Light','Moul', sans-serif;
-    background:linear-gradient(100deg,#FF6B6B 0%,#FFD93D 20%,#6BCB77 40%,#4DA6FF 60%,#C77DFF 80%,#FF6B6B 100%);
-    background-size:250% 100%;
-    color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.4);
-    border:1.5px solid rgba(255,255,255,.55);
-    animation: supportHighlight 5s linear infinite;
+    padding:6px 14px;
+    background:rgba(255,255,255,.08);
+    border:1.5px solid rgba(255,255,255,.35);
   }
-  #switchToFx.active{ color:#fff; }
+  #switchToFx.active{ background:rgba(255,255,255,.08); }
+  .fx-swap-icon{
+    width:26px; height:26px; display:block;
+    animation: fxSwapSpin 6s linear infinite;
+  }
+  @keyframes fxSwapSpin{
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  body.is-searching .fx-swap-icon{ animation-play-state: paused; }
   @media (max-width:420px){
     .app-switch-btn{ padding:8px 12px; font-size:12px; }
-    #switchToFx{ font-size:13px; }
+    #switchToFx{ padding:6px 10px; }
+    .fx-swap-icon{ width:22px; height:22px; }
     .access-badge{ padding:4px 8px; }
     .ab-time{ font-size:12px; }
   }
@@ -1067,7 +1073,26 @@
 
 <div class="app-switch-bar">
   <button type="button" class="app-switch-btn active" id="switchToTax">ឯកសារ</button>
-  <button type="button" class="app-switch-btn" id="switchToFx">$⇄៛</button>
+  <button type="button" class="app-switch-btn" id="switchToFx" aria-label="អត្រាប្តូរប្រាក់">
+    <svg class="fx-swap-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+        <path d="M50 14 C58 14 58 28 50 28 L36 28"/>
+        <path d="M46 22 L52 28 L58 22"/>
+        <path d="M14 50 C6 50 6 36 14 36 L28 36"/>
+        <path d="M18 42 L12 36 L18 30"/>
+      </g>
+      <g fill="none" stroke="#EC1560" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 14 C58 14 58 28 50 28 L36 28"/>
+        <path d="M46 22 L52 28 L58 22"/>
+        <path d="M14 50 C6 50 6 36 14 36 L28 36"/>
+        <path d="M18 42 L12 36 L18 30"/>
+      </g>
+      <circle cx="20" cy="20" r="14" fill="#EC1560" stroke="#fff" stroke-width="2"/>
+      <text x="20" y="27" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="18" fill="#fff">$</text>
+      <circle cx="44" cy="44" r="14" fill="#EC1560" stroke="#fff" stroke-width="2"/>
+      <text x="44" y="51" text-anchor="middle" font-family="'Khmer OS Muol Light','Moul',sans-serif" font-weight="700" font-size="15" fill="#fff">៛</text>
+    </svg>
+  </button>
   <button type="button" id="vgSupportBtnTop" class="support-us-btn" style="margin-left:8px; border:none; border-radius:16px; padding:4px 11px; font-size:11px; cursor:pointer; white-space:nowrap;">💛 Support Us</button>
   <div class="access-badge" id="accessBadge" style="display:none; margin-left:auto;">
     <span class="ab-time" id="accessTime">—</span>
@@ -1468,6 +1493,19 @@
     display:block; margin-top:6px; color:var(--brand-2); font-weight:500;
   }
 
+  /* INTL INTEREST RATE NOTES */
+  .intl-notes{
+    margin-top:16px; padding:14px 16px;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
+  }
+  .intl-notes-title{
+    font-family:'Moul','Noto Serif Khmer',serif; font-weight:400; font-size:13.5px;
+    color:var(--brand); margin:0 0 8px;
+  }
+  .intl-notes ul{ margin:0; padding-left:18px; }
+  .intl-notes li{ font-size:12.5px; color:var(--ink); opacity:.8; line-height:1.7; }
+  .intl-notes li b{ color:var(--ink); opacity:1; }
+
   /* LEGAL NOTE */
   .legal-note{
     background:var(--white);
@@ -1673,6 +1711,7 @@
     <button class="tab-btn" data-tab="salary">អត្រាប្តូរប្រាក់_បៀវត្ស</button>
     <button class="tab-btn" data-tab="normal">អត្រាប្តូរប្រាក់ប្រចាំខែ</button>
     <button class="tab-btn" data-tab="interest">អត្រាការប្រាក់កម្ចី</button>
+    <button class="tab-btn" data-tab="intl">អត្រាការប្រាក់អន្តរជាតិ</button>
   </div>
 
   <!-- PANEL 1: ANNUAL -->
@@ -1746,6 +1785,52 @@
       </div>
     </div>
     <div class="interest-grid" id="interest-grid"></div>
+  </section>
+
+  <section class="panel" id="panel-intl">
+    <div class="panel-law-note">
+      <div class="pln-body">
+        <p class="pln-title">អត្រាការប្រាក់អន្តរជាតិ (LIBOR / SIBOR → SOFR / SORA)</p>
+        <p>អត្រាមូលដ្ឋានអន្តរជាតិសម្រាប់កំណត់ការប្រាក់លើកម្ចី-មូលបត្រជារូបិយប័ណ្ណបរទេស។ LIBOR និង SIBOR ត្រូវបានបញ្ឈប់ទាំងស្រុងចាប់ពីចុងឆ្នាំ ២០២៤ ជំនួសដោយ SOFR/SORA។</p>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>ឆ្នាំ</th><th>USD LIBOR</th><th>SIBOR</th></tr></thead>
+        <tbody>
+          <tr><td>2017</td><td>~1.85%</td><td>1.55%</td></tr>
+          <tr><td>2018</td><td>~3.06%</td><td>1.89%</td></tr>
+          <tr><td>2019</td><td>~1.91%</td><td>1.83%</td></tr>
+          <tr><td>2020</td><td>~0.34%</td><td>0.81%</td></tr>
+          <tr><td>2021</td><td>~0.53%</td><td>0.83%</td></tr>
+          <tr><td>2022</td><td>~5.35%</td><td>4.20%</td></tr>
+          <tr><td>2023</td><td>~5.38%</td><td>4.05%</td></tr>
+          <tr><td>2024</td><td>~4.50% (មុនបិទ)</td><td>3.65% (មករា)</td></tr>
+          <tr><td>2025</td><td>~4.25% (SOFR)</td><td>~3.15% (SORA)</td></tr>
+          <tr><td>2026</td><td>~4.05% (SOFR)</td><td>~3.00% (SORA)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="intl-notes">
+      <p class="intl-notes-title">សេចក្តីសង្ខេបនិន្នាការ</p>
+      <ul>
+        <li><b>2020</b> — ធ្លាក់ចុះខ្លាំងបំផុតដោយសារវិបត្តិ COVID-19</li>
+        <li><b>2022–2023</b> — ឡើងខ្ពស់បំផុតទប់ទល់អតិផរណា</li>
+        <li><b>2024</b> — ឈប់ប្រើទាំងស្រុង ប្តូរទៅ SOFR/SORA</li>
+        <li><b>2025–2026</b> — ស្ថិរភាពក្រោមប្រព័ន្ធថ្មី (Risk-Free Rates)</li>
+      </ul>
+    </div>
+    <div class="table-scroll" style="margin-top:22px;">
+      <table>
+        <thead><tr><th>ប្រភេទ</th><th>អត្ថន័យពេញ</th><th>ចាប់ផ្តើម</th><th>ស្ថានភាព</th></tr></thead>
+        <tbody>
+          <tr><td>LIBOR</td><td>London Interbank Offered Rate</td><td>1986</td><td>បញ្ឈប់ (30 កញ្ញា 2024)</td></tr>
+          <tr><td>SIBOR</td><td>Singapore Interbank Offered Rate</td><td>ទសវត្សរ៍ 1980</td><td>បញ្ឈប់ (31 ធ្នូ 2024)</td></tr>
+          <tr><td>SOFR</td><td>Secured Overnight Financing Rate</td><td>មេសា 2018</td><td>កំពុងប្រើប្រាស់</td></tr>
+          <tr><td>SORA</td><td>Singapore Overnight Rate Average</td><td>កក្កដា 2019</td><td>កំពុងប្រើប្រាស់</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <div class="legal-note">
@@ -3960,7 +4045,7 @@ initPanels();
     display:inline-block;
     font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
     font-size:13px; color:#E4D6A8; letter-spacing:.02em;
-    animation: sourceMarqueeScroll 22s linear infinite;
+    animation: sourceMarqueeScroll 15s linear infinite;
     will-change: transform;
   }
   #sourceMarquee .marquee-track span{ padding:0 40px; }
