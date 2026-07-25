@@ -1090,6 +1090,20 @@
   #ifrsOverlay, #ifrsOverlay input, #ifrsOverlay .chip{
     font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif;
   }
+  .ifrs-search-wrap{
+    position:relative; display:flex; align-items:center;
+    background:var(--bg-card); border:1.5px solid var(--gold);
+    border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    margin-top:4px;
+  }
+  .ifrs-search-icon{ flex:0 0 auto; width:18px; height:18px; margin:0 6px 0 14px; color:var(--gold); }
+  #ifrsSearchInput{
+    flex:1 1 auto; border:none; outline:none; background:transparent;
+    font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif; font-size:15px;
+    padding:11px 14px 11px 6px; color:var(--ink);
+  }
+  #ifrsSearchInput::placeholder{ color:var(--ink-faint); }
+  .ifrs-search-wrap:focus-within{ border-color:var(--maroon); box-shadow:0 2px 12px rgba(122,43,36,.15); }
   #ifrsBody{ flex:1 1 auto; overflow-y:auto; padding:14px 20px 40px; max-width:900px; margin:0 auto; width:100%; box-sizing:border-box; }
   .ifrs-note{
     font-size:12px; color:var(--ink-faint); background:var(--gold-soft);
@@ -1104,14 +1118,13 @@
   .ifrs-card .ifrs-no{
     font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700;
     background:var(--teal); color:#fff; padding:2px 9px; border-radius:6px;
+    text-decoration:none; cursor:pointer; transition:background .15s ease;
   }
+  .ifrs-card .ifrs-no:hover{ background:var(--brand-2,#155943); }
   .ifrs-card .ifrs-status{ font-size:11.5px; color:var(--ink-faint); }
   .ifrs-card .ifrs-title-kh{ font-family:'Khmer OS Muol Light','Moul',serif; font-size:14.5px; color:var(--ink); margin:2px 0; }
   .ifrs-card .ifrs-title-en{ font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink-soft); font-style:italic; margin-bottom:5px; }
   .ifrs-card .ifrs-summary{ font-size:13px; color:var(--ink-soft); line-height:1.6; }
-  .ifrs-card .ifrs-source{
-    margin-top:8px; font-size:10.5px; color:var(--ink-faint); font-style:italic;
-  }
 </style>
 
 <div class="app-switch-bar">
@@ -1156,7 +1169,8 @@
     <div class="fx-title">ស្តង់ដារគណនេយ្យ-របាយការណ៍ហិរញ្ញវត្ថុអន្តរជាតិ (IAS / IFRS)</div>
   </div>
   <div id="ifrsBody">
-    <div class="search-wrap">
+    <div class="ifrs-search-wrap">
+      <svg class="ifrs-search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <input id="ifrsSearchInput" type="text" placeholder="វាយលេខស្តង់ដារ ឬពាក្យគន្លឹះ..." autocomplete="off">
     </div>
     <div class="filters" id="ifrsFilters">
@@ -1164,7 +1178,7 @@
       <button class="chip" data-group="IAS">IAS (24)</button>
       <button class="chip" data-group="IFRS">IFRS (19)</button>
     </div>
-    <div class="ifrs-note">ចំណាំ៖ សេចក្តីសង្ខេបខាងក្រោមសរសេរជាភាសាផ្ទាល់ខ្លួន (មិនមែនចម្លងផ្ទាល់ពីប្រភពណាមួយ) សម្រាប់យោងលឿនប៉ុណ្ណោះ។ ខ្លឹមសារពេញលេញផ្លូវការនៃស្តង់ដារនីមួយៗជាកម្មសិទ្ធិរក្សាសិទ្ធិរបស់ IFRS Foundation សូមចូលមើលនៅ <a href="https://www.ifrs.org" target="_blank" rel="noopener">ifrs.org</a>។</div>
+    <div class="ifrs-note">ចំណាំ៖ សេចក្តីសង្ខេបខាងក្រោមសរសេរជាភាសាផ្ទាល់ខ្លួន (មិនមែនចម្លងផ្ទាល់ពីប្រភពណាមួយ) សម្រាប់យោងលឿនប៉ុណ្ណោះ។ ប្រភពដើម៖ IFRS Foundation (<a href="https://www.ifrs.org" target="_blank" rel="noopener">ifrs.org</a>) · សេចក្តីសង្ខេបយោងតាម Deloitte IAS Plus — ចុចលេខស្តង់ដារលើកាតនីមួយៗ ដើម្បីអានលម្អិតបន្ថែម។</div>
     <div class="results-list" id="ifrsResults"></div>
   </div>
 </div>
@@ -2249,13 +2263,14 @@ initPanels();
         return;
       }
       resultsEl.innerHTML = filtered.map(function(r){
+        var slug = String(r.group).toLowerCase() + String(r.no).replace(/[^0-9]/g,'');
+        var srcUrl = 'https://www.iasplus.com/en/standards/' + String(r.group).toLowerCase() + '/' + slug;
         return '<div class="ifrs-card">' +
-          '<div class="ifrs-top"><span class="ifrs-no">' + escapeHtml(r.no) + '</span>' +
+          '<div class="ifrs-top"><a class="ifrs-no" href="' + srcUrl + '" target="_blank" rel="noopener">' + escapeHtml(r.no) + ' ↗</a>' +
           '<span class="ifrs-status">' + escapeHtml(r.status) + (r.year ? ' · ' + escapeHtml(r.year) : '') + '</span></div>' +
           '<div class="ifrs-title-kh">' + escapeHtml(r.titleKh) + '</div>' +
           (r.titleEn ? '<div class="ifrs-title-en">' + escapeHtml(r.titleEn) + '</div>' : '') +
           (r.summary ? '<div class="ifrs-summary">' + escapeHtml(r.summary) + '</div>' : '') +
-          '<div class="ifrs-source">ប្រភពដើម៖ IFRS Foundation · សេចក្តីសង្ខេបយោងតាម Deloitte IAS Plus</div>' +
         '</div>';
       }).join('');
     }
@@ -2282,10 +2297,10 @@ initPanels();
   
   <div class="tabs" id="tabs">
     <button class="tab-btn active" data-tab="law">ច្បាប់ពន្ធដារ<span class="n" id="cnt-law"></span></button>
-    <button class="tab-btn" id="ifrsTabBtn" type="button">IFRS</button>
     <button class="tab-btn" data-tab="glossary">សទ្ទានុក្រម<span class="n" id="cnt-glossary"></span></button>
     <button class="tab-btn" data-tab="reg">តម្លៃអចលនទ្រព្យ<span class="n" id="cnt-reg"></span></button>
     <button class="tab-btn" data-tab="dta">DTA<span class="n" id="cnt-dta"></span></button>
+    <button class="tab-btn" id="ifrsTabBtn" type="button">IFRS</button>
     <button class="tab-btn" data-tab="types">ប្រភេទពន្ធ<span class="n" id="cnt-types"></span></button>
     <button class="tab-btn" data-tab="payer">ប្រភេទអ្នកជាប់ពន្ធ<span class="n" id="cnt-payer"></span></button>
   </div>
