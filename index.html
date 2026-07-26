@@ -547,11 +547,18 @@
   function pad(n){ return n < 10 ? '0' + n : '' + n; }
   function dateKey(d){ return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
 
+  var KHMER_MONTHS_SHORT = ['មករា','កុម្ភៈ','មីនា','មេសា','ឧសភា','មិថុនា','កក្កដា','សីហា','កញ្ញា','តុលា','វិច្ឆិកា','ធ្នូ'];
+  function formatDateKh(d){
+    return toKhmerDigits(d.getDate()) + ' ' + KHMER_MONTHS_SHORT[d.getMonth()] + ' ' + toKhmerDigits(d.getFullYear());
+  }
+
+  // ត្រឡប់ {rate, date} ដោយស្វែងរកថយក្រោយរហូតដល់ថ្ងៃដែលមានទិន្នន័យ (សៅរ៍/អាទិត្យ/ថ្ងៃឈប់ គ្មានអត្រាថ្មី
+  // នឹងបង្ហាញអត្រាថ្ងៃធ្វើការចុងក្រោយដោយស្វ័យប្រវត្តិ)
   function findLatestRate(fromDate){
     var d = new Date(fromDate.getTime());
     for(var i = 0; i < 14; i++){ // ស្វែងរកថយក្រោយបានដល់ ១៤ថ្ងៃ
       var key = dateKey(d);
-      if(EXCHANGE_RATE_DAILY.hasOwnProperty(key)) return EXCHANGE_RATE_DAILY[key];
+      if(EXCHANGE_RATE_DAILY.hasOwnProperty(key)) return { rate: EXCHANGE_RATE_DAILY[key], date: new Date(d.getTime()) };
       d.setDate(d.getDate() - 1);
     }
     return null;
@@ -562,23 +569,25 @@
     return String(n).replace(/[0-9]/g, function(ch){ return map[+ch]; });
   }
 
-  // ព្យាយាមទាញអត្រាផ្លូវការពី NBC ដោយផ្ទាល់ (public API) — បើបរាជ័យ (CORS/network)
-  // ត្រឡប់ទៅប្រើតារាងដែលបានកត់ត្រាដោយដៃ (EXCHANGE_RATE_DAILY) ជំនួសវិញ
+  // ព្យាយាមទាញអត្រាផ្លូវការពី NBC តាមរយៈ Apps Script (server-side) ដើម្បីជៀសវាងបញ្ហា CORS
+  // ដែលកើតឡើងពេលព្យាយាមហៅ NBC ដោយផ្ទាល់ពី browser — បើបរាជ័យ ត្រឡប់ទៅប្រើតារាងកត់ត្រាដោយដៃវិញ
+  var APPS_SCRIPT_URL_FOR_RATE = 'https://script.google.com/macros/s/AKfycbzoagEmWz5ZRDUV51ts4QMT90o3kFLWaYHkCeo4Ubx1XKkTJ0JHoDvNhLXAZahh_vyeWA/exec';
   function fetchLiveNbcRate(callback){
-    fetch('https://www.nbc.gov.kh/api/exRate.php')
-      .then(function(r){ return r.text(); })
-      .then(function(xmlText){
-        var xml = new DOMParser().parseFromString(xmlText, 'text/xml');
-        var exNodes = xml.getElementsByTagName('ex');
-        for(var i=0; i<exNodes.length; i++){
-          var keyNode = exNodes[i].getElementsByTagName('key')[0];
-          if(keyNode && keyNode.textContent === 'USD/KHR'){
-            var avgNode = exNodes[i].getElementsByTagName('average')[0];
-            var avg = avgNode ? parseFloat(avgNode.textContent) : NaN;
-            if(!isNaN(avg)){ callback(Math.round(avg)); return; }
+    if(!APPS_SCRIPT_URL_FOR_RATE || APPS_SCRIPT_URL_FOR_RATE.indexOf('PASTE_YOUR') === 0){ callback(null); return; }
+    fetch(APPS_SCRIPT_URL_FOR_RATE + '?action=nbcRate')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data && data.rate){
+          // NBC ត្រឡប់ date ជាទម្រង់ MM/DD/YYYY
+          var rateDate = null;
+          if(data.date){
+            var parts = data.date.split('/');
+            if(parts.length === 3){ rateDate = new Date(+parts[2], +parts[0]-1, +parts[1]); }
           }
+          callback({ rate: Math.round(data.rate), date: rateDate });
+        } else {
+          callback(null);
         }
-        callback(null);
       })
       .catch(function(){ callback(null); });
   }
@@ -595,8 +604,14 @@
     }catch(e){
       gregorianText = '';
     }
-    function paint(rate){
-      var rateText = rate ? ('អត្រាប្តូរប្រាក់ថ្ងៃនេះ 1$ = ' + toKhmerDigits(rate) + ' រៀល') : '';
+    function paint(info){
+      var rateText = '';
+      if(info && info.rate){
+        var isToday = info.date && dateKey(info.date) === dateKey(now);
+        rateText = isToday
+          ? ('អត្រាប្តូរប្រាក់ថ្ងៃនេះ 1$ = ' + toKhmerDigits(info.rate) + ' រៀល')
+          : ('អត្រាប្តូរប្រាក់ (ថ្ងៃធ្វើការចុងក្រោយ' + (info.date ? ' ទី' + formatDateKh(info.date) : '') + ') 1$ = ' + toKhmerDigits(info.rate) + ' រៀល');
+      }
       var text = '🗓️ ' + gregorianText + (rateText ? ' · 💱 ' + rateText : '');
       track.innerHTML = '';
       var s1 = document.createElement('span'); s1.textContent = text;
@@ -606,8 +621,8 @@
       el.style.display = 'block';
     }
     paint(findLatestRate(now)); // បង្ហាញភ្លាមៗពីតារាងសិន កុំឲ្យទំព័រយឺត
-    fetchLiveNbcRate(function(liveRate){
-      if(liveRate) paint(liveRate); // បើទាញបានពី NBC ដោយផ្ទាល់ ជំនួសដោយអត្រាផ្លូវការភ្លាមៗ
+    fetchLiveNbcRate(function(liveInfo){
+      if(liveInfo) paint(liveInfo); // បើទាញបានពី NBC ដោយផ្ទាល់ ជំនួសដោយអត្រាផ្លូវការភ្លាមៗ
     });
   }
 
