@@ -4422,10 +4422,7 @@ initPanels();
       TYPES_DATA = JSON.parse(b64ToUtf8(document.getElementById('typesData_b64').textContent));
       PAYER_DATA = JSON.parse(b64ToUtf8(document.getElementById('payerData_b64').textContent));
       GLOSSARY_DATA = JSON.parse(b64ToUtf8(document.getElementById('glossaryData_b64').textContent));
-      buildDerivedData();
-      renderTypeFilters();
-      renderStatusFilters();
-      render();
+      mergeNewDocsThenRender();
     }catch(err){
       DATA = null;
       var msg = 'មានបញ្ហាក្នុងការផ្ទុកទិន្នន័យ៖ ' + (err && err.message ? err.message : String(err));
@@ -4436,6 +4433,44 @@ initPanels();
       box.textContent = msg;
       host.prepend(box);
     }
+  }
+
+  // ទាញយកឯកសារថ្មីៗដែលរកឃើញពី tax.gov.kh (ដោយស្វ័យប្រវត្តិ) ហើយបញ្ចូលទៅក្នុងបញ្ជីច្បាប់
+  // មុននឹងបង្ហាញ — មាន timeout ការពារ កុំឲ្យទំព័រគាំងរង់ចាំ បើហៅមិនបាន
+  var NEWDOCS_STATUS_MAP = { 'Valid':'សុពលភាព', 'Abrogated':'និរាករណ៍' };
+  function mergeNewDocsThenRender(){
+    var scriptUrl = 'https://script.google.com/macros/s/AKfycbx8aP6JP90ox7VxsZPb5R8cO7SrXEbWLzT74g_OYiMotCoGY-DAHG64bxdM-xReO0uD5A/exec';
+    var finished = false;
+    function proceed(){
+      if(finished) return;
+      finished = true;
+      buildDerivedData();
+      renderTypeFilters();
+      renderStatusFilters();
+      render();
+    }
+    var safetyTimer = setTimeout(proceed, 3000);
+
+    fetch(scriptUrl + '?action=newDocs')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data && data.items && data.items.length && DATA && DATA.law){
+          data.items.forEach(function(item){
+            DATA.law.unshift({
+              type: 'សេចក្តីជូនដំណឹង',
+              docNo: item.docNo,
+              date: item.issueDate,
+              title: item.title,
+              statusMain: NEWDOCS_STATUS_MAP[item.status] || item.status || 'សុពលភាព',
+              statusNote: '',
+              link: item.link
+            });
+          });
+        }
+        clearTimeout(safetyTimer);
+        proceed();
+      })
+      .catch(function(){ clearTimeout(safetyTimer); proceed(); });
   }
   window.__initTaxApp = initApp;
 })();
