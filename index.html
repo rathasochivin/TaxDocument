@@ -4438,6 +4438,11 @@ initPanels();
   // ទាញយកឯកសារថ្មីៗដែលរកឃើញពី tax.gov.kh (ដោយស្វ័យប្រវត្តិ) ហើយបញ្ចូលទៅក្នុងបញ្ជីច្បាប់
   // មុននឹងបង្ហាញ — មាន timeout ការពារ កុំឲ្យទំព័រគាំងរង់ចាំ បើហៅមិនបាន
   var NEWDOCS_STATUS_MAP = { 'Valid':'សុពលភាព', 'Abrogated':'និរាករណ៍' };
+  var NEWDOCS_CATEGORY_MAP = {
+    'law':'ច្បាប់', 'sub-decree':'អនុក្រឹត្យ', 'prakas':'ប្រកាស',
+    'circular':'សារាចរណែនាំ', 'decision':'សេចក្ដីសម្រេច',
+    'instruction':'សេចក្ដីណែនាំ', 'notice':'សេចក្តីជូនដំណឹង'
+  };
   function mergeNewDocsThenRender(){
     var scriptUrl = 'https://script.google.com/macros/s/AKfycbx8aP6JP90ox7VxsZPb5R8cO7SrXEbWLzT74g_OYiMotCoGY-DAHG64bxdM-xReO0uD5A/exec';
     var finished = false;
@@ -4457,7 +4462,7 @@ initPanels();
         if(data && data.items && data.items.length && DATA && DATA.law){
           data.items.forEach(function(item){
             DATA.law.unshift({
-              type: 'សេចក្តីជូនដំណឹង',
+              type: NEWDOCS_CATEGORY_MAP[item.category] || 'សេចក្តីជូនដំណឹង',
               docNo: item.docNo,
               date: item.issueDate,
               title: item.title,
