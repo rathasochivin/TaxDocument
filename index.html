@@ -571,7 +571,7 @@
 
   // ព្យាយាមទាញអត្រាផ្លូវការពី NBC តាមរយៈ Apps Script (server-side) ដើម្បីជៀសវាងបញ្ហា CORS
   // ដែលកើតឡើងពេលព្យាយាមហៅ NBC ដោយផ្ទាល់ពី browser — បើបរាជ័យ ត្រឡប់ទៅប្រើតារាងកត់ត្រាដោយដៃវិញ
-  var APPS_SCRIPT_URL_FOR_RATE = 'https://script.google.com/macros/s/AKfycbzoagEmWz5ZRDUV51ts4QMT90o3kFLWaYHkCeo4Ubx1XKkTJ0JHoDvNhLXAZahh_vyeWA/exec';
+  var APPS_SCRIPT_URL_FOR_RATE = 'https://script.google.com/macros/s/AKfycbx8aP6JP90ox7VxsZPb5R8cO7SrXEbWLzT74g_OYiMotCoGY-DAHG64bxdM-xReO0uD5A/exec';
   function fetchLiveNbcRate(callback){
     if(!APPS_SCRIPT_URL_FOR_RATE || APPS_SCRIPT_URL_FOR_RATE.indexOf('PASTE_YOUR') === 0){ callback(null); return; }
     fetch(APPS_SCRIPT_URL_FOR_RATE + '?action=nbcRate')
@@ -849,7 +849,7 @@
 <script>
 (function(){
   // ដូរ URL ខាងក្រោមទៅជា Web App URL របស់ Google Apps Script ដែលអ្នក deploy ដោយខ្លួនឯង
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoagEmWz5ZRDUV51ts4QMT90o3kFLWaYHkCeo4Ubx1XKkTJ0JHoDvNhLXAZahh_vyeWA/exec';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8aP6JP90ox7VxsZPb5R8cO7SrXEbWLzT74g_OYiMotCoGY-DAHG64bxdM-xReO0uD5A/exec';
 
   var STORAGE_KEY = 'vg_request_id';
   var EXPIRES_KEY = 'vg_expires_at';
