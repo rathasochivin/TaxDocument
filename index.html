@@ -782,8 +782,7 @@
 
     <div id="vgAboutContent" style="padding:34px 26px 26px;">
       <p style="font-family:'Khmer OS Muol Light','Moul',serif; font-weight:400; font-size:14.5px; color:#1a1330; margin:0 0 6px;">គោលបំណង</p>
-      <p style="font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif; font-size:13.5px; color:#5B564C; line-height:1.75; margin:0 0 22px;">រៀបចំប្រព័ន្ធបណ្តុំឯកសារដោយភ្ជាប់ទៅគេហទំព័រផ្លូវការ</p>
- 	</p>ដើម្បីជាភាពងាយស្រួលក្នុងការស្វែងរកឯកសារ។</p>
+      <p style="font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif; font-size:13.5px; color:#5B564C; line-height:1.75; margin:0 0 22px;">រៀបចំប្រព័ន្ធបណ្តុំឯកសារដោយភ្ជាប់ទៅគេហទំព័រផ្លូវការ ដើម្បីជាភាពងាយស្រួលក្នុងការស្វែងរកឯកសារ។</p>
       <p style="font-family:'Khmer OS Muol Light','Moul',serif; font-weight:400; font-size:14.5px; color:#1a1330; margin:0 0 10px;">គាំទ្រពួកយើង</p>
       <button id="vgShowQrBtn" type="button" style="font-family:'Khmer OS Siemreap','Noto Sans Khmer',sans-serif; font-size:13.5px; font-weight:700; background:#C7A252; color:#1a1330; border:none; border-radius:20px; padding:10px 20px; cursor:pointer;">💛 ចុចទីនេះដើម្បីបង្ហាញ QR Code</button>
     </div>
@@ -3892,12 +3891,19 @@ initPanels();
   function digitAgnosticPattern(escapedTerm){
     return escapedTerm.replace(/[0-9]/g, function(d){ return '['+d+KHMER_DIGITS[+d]+']'; });
   }
+  var _highlightRegexCache = {};
   function highlight(text, terms){
     if(!terms.length) return escapeHtml(text);
     var esc = escapeHtml(text);
     terms.forEach(function(t){
       if(!t) return;
-      var re = new RegExp('('+digitAgnosticPattern(escapeRegExp(t))+')','gi');
+      var re = _highlightRegexCache[t];
+      if(!re){
+        re = new RegExp('('+digitAgnosticPattern(escapeRegExp(t))+')','gi');
+        _highlightRegexCache[t] = re;
+      } else {
+        re.lastIndex = 0; // reset stateful regex (global flag) before reuse
+      }
       esc = esc.replace(re, '<mark>$1</mark>');
     });
     return esc;
@@ -4400,7 +4406,7 @@ initPanels();
       state.query = input.value;
       render();
       renderSuggestions();
-    }, 120);
+    }, 180);
   });
   input.addEventListener('focus', function(){
     if(input.value.trim()) renderSuggestions();
