@@ -4286,7 +4286,7 @@ initPanels();
     }
     emptyEl.style.display = 'none';
 
-    var LIMIT = 100;
+    var LIMIT = 20;
     var shown = matches.slice(0, LIMIT);
     var fn = cardFn[state.tab];
     listEl.innerHTML = shown.map(function(r){ return fn(r, terms); }).join('');
@@ -4364,7 +4364,8 @@ initPanels();
     var qLower = normDigits(q.toLowerCase());
     var seen = {};
     var candidates = [];
-    for(var i=0; i<records.length; i++){
+    var CANDIDATE_CAP = 60; // ព្រំដែនប្រមូល — គ្រប់គ្រាន់ដើម្បីរើសយក ៥ ល្អបំផុត ដោយមិនចាំបាច់ស្កេន/តម្រៀបទាំងអស់
+    for(var i=0; i<records.length && candidates.length<CANDIDATE_CAP; i++){
       var title = records[i][field];
       if(!title) continue;
       var norm = records[i]._titleNorm !== undefined ? records[i]._titleNorm : normDigits(title.toLowerCase());
@@ -4378,7 +4379,7 @@ initPanels();
       if(a.idx !== b.idx) return a.idx - b.idx;
       return a.len - b.len;
     });
-    return candidates.slice(0, 8).map(function(c){ return c.title; });
+    return candidates.slice(0, 5).map(function(c){ return c.title; });
   }
 
   function renderSuggestions(){
