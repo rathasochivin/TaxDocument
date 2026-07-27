@@ -1227,13 +1227,14 @@
     var threshold = 160;
     var wasOpen = false;
     setInterval(function(){
+      if(document.body.classList.contains('is-searching')) return; // កុំពិនិត្យខណៈកំពុងវាយ (ជៀសវាងបង្ខំ layout recalculation)
       var isOpen = (window.outerWidth - window.innerWidth > threshold) ||
                    (window.outerHeight - window.innerHeight > threshold);
       if(isOpen !== wasOpen){
         wasOpen = isOpen;
         document.body.classList.toggle('vg-devtools-open', isOpen);
       }
-    }, 800);
+    }, 1500);
   }
 })();
 </script>
