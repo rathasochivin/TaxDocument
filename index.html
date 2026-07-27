@@ -4289,11 +4289,22 @@ initPanels();
       : ('បង្ហាញលទ្ធផលទាំងអស់ '+matches.length);
   }
 
+  // ផ្អាកចលនាតុបតែងបន្តិចខណៈកំពុងចុច/render ដើម្បីកុំឲ្យប៉ះពាល់ដល់ភាពរលូន (desktop ជាពិសេស)
+  var pulsePauseTimer = null;
+  function pulsePauseAnimations(){
+    document.body.classList.add('is-searching');
+    clearTimeout(pulsePauseTimer);
+    pulsePauseTimer = setTimeout(function(){
+      document.body.classList.remove('is-searching');
+    }, 500);
+  }
+
   // ---------- tabs ----------
   document.getElementById('tabs').addEventListener('click', function(e){
     var btn = e.target.closest('.tab-btn');
     if(!btn) return;
     if(btn.id === 'ifrsTabBtn') return; // ដោះស្រាយដោយ script ដាច់ដោយឡែក (បើកផ្ទាំង IFRS)
+    pulsePauseAnimations();
     state.tab = btn.getAttribute('data-tab');
     state.activeType = null;
     state.activeStatus = null;
@@ -4311,6 +4322,7 @@ initPanels();
   // ---------- type / status filter clicks ----------
   document.getElementById('typeFilters').addEventListener('click', function(e){
     var btn = e.target.closest('.chip'); if(!btn) return;
+    pulsePauseAnimations();
     var t = btn.getAttribute('data-type');
     state.activeType = t ? t : null;
     renderTypeFilters();
@@ -4321,6 +4333,7 @@ initPanels();
   if(statusFiltersEl){
     statusFiltersEl.addEventListener('click', function(e){
       var btn = e.target.closest('.chip'); if(!btn) return;
+      pulsePauseAnimations();
       var s = btn.getAttribute('data-status');
       state.activeStatus = (state.activeStatus === s) ? null : (s ? s : null);
       renderTypeFilters();
