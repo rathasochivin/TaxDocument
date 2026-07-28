@@ -363,12 +363,6 @@
   .empty-state .msg{font-size:15px; color:var(--ink-soft);}
 
   .results-footer{text-align:center; padding:22px 0 4px; font-size:14px; color:var(--ink-faint);}
-  .load-more-btn{
-    font-family:'Khmer OS Siemreap', sans-serif; font-size:13.5px; font-weight:700;
-    background:var(--maroon); color:#fff; border:none; border-radius:20px;
-    padding:8px 18px; cursor:pointer; margin-left:8px;
-  }
-  .load-more-btn:hover{ background:var(--maroon-deep); }
 
   @media (max-width:600px){
     .brand-title{font-size:15px;}
@@ -643,7 +637,7 @@
      គ្រាន់តែប្តូរ false ទៅ true ខាងក្រោម រួច Commit — គ្មានអ្វីផ្សេងទៀតត្រូវកែទេ។
      ចង់បើកគេហទំព័រឡើងវិញ? ប្តូរ true ទៅ false វិញ។
      ========================================================================== -->
-<script>var MAINTENANCE_MODE = true;</script>
+<script>var MAINTENANCE_MODE = false;</script>
 <div id="maintenanceOverlay" style="display:none; position:fixed; inset:0; z-index:999999; background:linear-gradient(180deg, #24384A 0%, #1B2C3B 100%); align-items:center; justify-content:center; padding:24px; text-align:center; font-family:'Noto Sans Khmer','Space Grotesk',sans-serif;">
   <div style="max-width:440px;">
     <div style="font-size:46px; margin-bottom:14px;">🛠️</div>
@@ -1233,14 +1227,13 @@
     var threshold = 160;
     var wasOpen = false;
     setInterval(function(){
-      if(document.body.classList.contains('is-searching')) return; // កុំពិនិត្យខណៈកំពុងវាយ (ជៀសវាងបង្ខំ layout recalculation)
       var isOpen = (window.outerWidth - window.innerWidth > threshold) ||
                    (window.outerHeight - window.innerHeight > threshold);
       if(isOpen !== wasOpen){
         wasOpen = isOpen;
         document.body.classList.toggle('vg-devtools-open', isOpen);
       }
-    }, 1500);
+    }, 800);
   }
 })();
 </script>
@@ -3886,7 +3879,7 @@ initPanels();
       return Object.assign({}, s, {count:count});
     }).filter(function(s){ return s.count > 0; });
 
-    state = { tab:'law', activeType:null, activeStatus:null, query:'', displayCount:20 };
+    state = { tab:'law', activeType:null, activeStatus:null, query:'' };
   }
 
   function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -3898,19 +3891,12 @@ initPanels();
   function digitAgnosticPattern(escapedTerm){
     return escapedTerm.replace(/[0-9]/g, function(d){ return '['+d+KHMER_DIGITS[+d]+']'; });
   }
-  var _highlightRegexCache = {};
   function highlight(text, terms){
     if(!terms.length) return escapeHtml(text);
     var esc = escapeHtml(text);
     terms.forEach(function(t){
       if(!t) return;
-      var re = _highlightRegexCache[t];
-      if(!re){
-        re = new RegExp('('+digitAgnosticPattern(escapeRegExp(t))+')','gi');
-        _highlightRegexCache[t] = re;
-      } else {
-        re.lastIndex = 0; // reset stateful regex (global flag) before reuse
-      }
+      var re = new RegExp('('+digitAgnosticPattern(escapeRegExp(t))+')','gi');
       esc = esc.replace(re, '<mark>$1</mark>');
     });
     return esc;
@@ -4288,38 +4274,19 @@ initPanels();
       listEl.innerHTML = '';
       emptyEl.style.display = 'block';
       emptyQueryEl.textContent = state.query.trim() ? ('"' + state.query.trim() + '"') : 'លក្ខខណ្ឌនេះ';
-      footerEl.innerHTML = '';
+      footerEl.textContent = '';
       return;
     }
     emptyEl.style.display = 'none';
 
-    var LIMIT = 20;
-    if(!state.displayCount) state.displayCount = LIMIT;
-    var shown = matches.slice(0, state.displayCount);
+    var LIMIT = 100;
+    var shown = matches.slice(0, LIMIT);
     var fn = cardFn[state.tab];
     listEl.innerHTML = shown.map(function(r){ return fn(r, terms); }).join('');
 
-    if(matches.length > shown.length){
-      footerEl.innerHTML = 'បង្ហាញ '+shown.length+' លទ្ធផល ក្នុងចំណោម '+matches.length+' &nbsp; ' +
-        '<button type="button" id="loadMoreBtn" class="load-more-btn">មើលបន្ថែម ↓</button>';
-      var loadMoreBtn = document.getElementById('loadMoreBtn');
-      if(loadMoreBtn) loadMoreBtn.addEventListener('click', function(){
-        state.displayCount += 40;
-        render();
-      });
-    } else {
-      footerEl.textContent = 'បង្ហាញលទ្ធផលទាំងអស់ '+matches.length;
-    }
-  }
-
-  // ផ្អាកចលនាតុបតែងបន្តិចខណៈកំពុងចុច/render ដើម្បីកុំឲ្យប៉ះពាល់ដល់ភាពរលូន (desktop ជាពិសេស)
-  var pulsePauseTimer = null;
-  function pulsePauseAnimations(){
-    document.body.classList.add('is-searching');
-    clearTimeout(pulsePauseTimer);
-    pulsePauseTimer = setTimeout(function(){
-      document.body.classList.remove('is-searching');
-    }, 500);
+    footerEl.textContent = matches.length > LIMIT
+      ? ('បង្ហាញ '+LIMIT+' លទ្ធផលដំបូង ក្នុងចំណោម '+matches.length+' សូមកំណត់ពាក្យស្វែងរកឱ្យតឹងជាងនេះ')
+      : ('បង្ហាញលទ្ធផលទាំងអស់ '+matches.length);
   }
 
   // ---------- tabs ----------
@@ -4327,9 +4294,7 @@ initPanels();
     var btn = e.target.closest('.tab-btn');
     if(!btn) return;
     if(btn.id === 'ifrsTabBtn') return; // ដោះស្រាយដោយ script ដាច់ដោយឡែក (បើកផ្ទាំង IFRS)
-    pulsePauseAnimations();
     state.tab = btn.getAttribute('data-tab');
-    state.displayCount = 20;
     state.activeType = null;
     state.activeStatus = null;
     state.query = '';
@@ -4346,10 +4311,8 @@ initPanels();
   // ---------- type / status filter clicks ----------
   document.getElementById('typeFilters').addEventListener('click', function(e){
     var btn = e.target.closest('.chip'); if(!btn) return;
-    pulsePauseAnimations();
     var t = btn.getAttribute('data-type');
     state.activeType = t ? t : null;
-    state.displayCount = 20;
     renderTypeFilters();
     renderStatusFilters();
     render();
@@ -4358,10 +4321,8 @@ initPanels();
   if(statusFiltersEl){
     statusFiltersEl.addEventListener('click', function(e){
       var btn = e.target.closest('.chip'); if(!btn) return;
-      pulsePauseAnimations();
       var s = btn.getAttribute('data-status');
       state.activeStatus = (state.activeStatus === s) ? null : (s ? s : null);
-      state.displayCount = 20;
       renderTypeFilters();
       renderStatusFilters();
       render();
@@ -4383,8 +4344,7 @@ initPanels();
     var qLower = normDigits(q.toLowerCase());
     var seen = {};
     var candidates = [];
-    var CANDIDATE_CAP = 60; // ព្រំដែនប្រមូល — គ្រប់គ្រាន់ដើម្បីរើសយក ៥ ល្អបំផុត ដោយមិនចាំបាច់ស្កេន/តម្រៀបទាំងអស់
-    for(var i=0; i<records.length && candidates.length<CANDIDATE_CAP; i++){
+    for(var i=0; i<records.length; i++){
       var title = records[i][field];
       if(!title) continue;
       var norm = records[i]._titleNorm !== undefined ? records[i]._titleNorm : normDigits(title.toLowerCase());
@@ -4398,7 +4358,7 @@ initPanels();
       if(a.idx !== b.idx) return a.idx - b.idx;
       return a.len - b.len;
     });
-    return candidates.slice(0, 5).map(function(c){ return c.title; });
+    return candidates.slice(0, 8).map(function(c){ return c.title; });
   }
 
   function renderSuggestions(){
@@ -4424,10 +4384,9 @@ initPanels();
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(function(){
       state.query = input.value;
-      state.displayCount = 20;
       render();
       renderSuggestions();
-    }, 180);
+    }, 120);
   });
   input.addEventListener('focus', function(){
     if(input.value.trim()) renderSuggestions();
@@ -4447,7 +4406,6 @@ initPanels();
     if(!item) return;
     input.value = item.textContent;
     state.query = input.value;
-    state.displayCount = 20;
     clearBtn.classList.add('show');
     closeSuggestions();
     render();
