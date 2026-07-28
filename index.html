@@ -3860,9 +3860,14 @@ initPanels();
       var order = [];
       DATA.reg.forEach(function(d){
         var m = String(d.title||'').match(/^(.*?)\s*\(([០-៩0-9]{4})\)\s*$/);
-        var city = m ? m[1].trim() : d.title;
+        var cityRaw = m ? m[1].trim() : d.title;
         var year = m ? m[2] : '';
-        if(!grouped[city]){ grouped[city] = { title: city, years: [] }; order.push(city); }
+        // ធ្វើឱ្យឈ្មោះទីក្រុងស្មើគ្នា ទោះក្នុងទិន្នន័យប្រភពមានភាពខុសគ្នាបន្តិចបន្តួច (មាន/គ្មាន "ខេត្ត" ខាងមុខ ឬអក្ខរាវិរុទ្ធខុសគ្នាបន្តិច)
+        var cityKey = cityRaw.replace(/^ខេត្ត\s*/, '').replace('កំពង់ស្ពី', 'កំពង់ស្ពឺ').replace('កណ្តាល', 'កណ្ដាល').trim();
+        if(!grouped[cityKey]){ grouped[cityKey] = { title: cityRaw, years: [] }; order.push(cityKey); }
+        // ប្រើទម្រង់ឈ្មោះពេញលេញជាង (មាន "ខេត្ត") ជាចំណងជើងបង្ហាញ បើមាន
+        if(/^ខេត្ត/.test(cityRaw)) grouped[cityKey].title = cityRaw;
+        var city = cityKey;
         grouped[city].years.push({ year: year, date: d.date, link: d.link });
       });
       return order.map(function(city, i){
