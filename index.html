@@ -3859,7 +3859,7 @@ initPanels();
       var grouped = {};
       var order = [];
       DATA.reg.forEach(function(d){
-        var m = String(d.title||'').match(/^(.*?)\s*\((\d{4})\)\s*$/);
+        var m = String(d.title||'').match(/^(.*?)\s*\(([០-៩0-9]{4})\)\s*$/);
         var city = m ? m[1].trim() : d.title;
         var year = m ? m[2] : '';
         if(!grouped[city]){ grouped[city] = { title: city, years: [] }; order.push(city); }
