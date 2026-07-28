@@ -294,6 +294,13 @@
   .doc-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 
   .doc-compact{ overflow:hidden; }
+  .reg-years{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .reg-year-link{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:700;
+    background:var(--gold-soft); color:var(--maroon); border:1px solid var(--gold);
+    border-radius:8px; padding:4px 12px; text-decoration:none; transition:background .15s ease;
+  }
+  .reg-year-link:hover{ background:var(--maroon); color:#fff; border-color:var(--maroon); }
   .doc-compact .doc-date{ float:right; margin:1px 0 6px 12px; }
   .doc-compact .doc-title{ overflow:hidden; }
 
@@ -3848,9 +3855,30 @@ initPanels();
         _titleNorm: normDigits((d.title||'').toLowerCase())
       });
     });
-    reg = DATA.reg.map(function(d,i){
-      return Object.assign({}, d, {id:'reg'+i, searchBlob:normDigits((d.title+' '+d.date).toLowerCase()), _titleNorm: normDigits((d.title||'').toLowerCase())});
-    });
+    reg = (function(){
+      var grouped = {};
+      var order = [];
+      DATA.reg.forEach(function(d){
+        var m = String(d.title||'').match(/^(.*?)\s*\((\d{4})\)\s*$/);
+        var city = m ? m[1].trim() : d.title;
+        var year = m ? m[2] : '';
+        if(!grouped[city]){ grouped[city] = { title: city, years: [] }; order.push(city); }
+        grouped[city].years.push({ year: year, date: d.date, link: d.link });
+      });
+      return order.map(function(city, i){
+        var g = grouped[city];
+        g.years.sort(function(a,b){ return (b.year||'') < (a.year||'') ? -1 : ((b.year||'') > (a.year||'') ? 1 : 0); });
+        var allYearsText = g.years.map(function(y){ return y.year; }).join(' ');
+        return {
+          id: 'reg'+i,
+          title: g.title,
+          years: g.years,
+          date: g.years[0] ? g.years[0].date : '',
+          searchBlob: normDigits((g.title+' '+allYearsText).toLowerCase()),
+          _titleNorm: normDigits(g.title.toLowerCase())
+        };
+      });
+    })();
     dta = DATA.dta.map(function(d,i){
       return Object.assign({}, d, {id:'dta'+i, searchBlob:normDigits((d.title+' '+d.date).toLowerCase()), _titleNorm: normDigits((d.title||'').toLowerCase())});
     });
@@ -4012,12 +4040,15 @@ initPanels();
   }
   function cardReg(r, terms){
     var titleHtml = highlight(r.title, terms);
+    var yearLinks = (r.years||[]).map(function(y){
+      return '<a class="reg-year-link" href="'+y.link+'" target="gdtDocViewer" rel="noopener noreferrer" title="'+escapeHtml(y.date||'')+'">'+escapeHtml(y.year)+'</a>';
+    }).join('');
     return (
       '<div class="doc-card">'+
         '<div class="doc-compact">'+
-          '<span class="doc-date">'+escapeHtml(r.date)+'</span>'+
-          '<h3 class="doc-title"><a href="'+r.link+'" target="gdtDocViewer" rel="noopener noreferrer">'+titleHtml+'</a></h3>'+
+          '<h3 class="doc-title">'+titleHtml+'</h3>'+
         '</div>'+
+        '<div class="reg-years">'+yearLinks+'</div>'+
       '</div>'
     );
   }
