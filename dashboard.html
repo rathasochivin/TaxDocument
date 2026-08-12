@@ -2,20 +2,6 @@
 <html lang="km">
 <head>
 <meta charset="UTF-8">
-<script>
-/* ══ ឆ្មាំចូលប្រព័ន្ធ — ត្រូវនៅខាងលើគេបំផុត ══════════════════════════
-   ឯកសារនេះជា dashboard ហើយវាអង្គុយនៅ root ដើម្បីអោយ URL ជា
-   «teamsmos.com» សុទ្ធ។ អ្នកដែលមិនទាន់ចូល ត្រូវបញ្ជូនទៅ login.html
-   ភ្លាមៗ — ដាក់នៅទីនេះមុនគេ ដើម្បីអោយ browser បញ្ឈប់ការទាញឯកសារ
-   ៣ MB ដែលនៅសល់។ ⚠ កុំផ្លាស់ប្លុកនេះទៅខាងក្រោម។ */
-(function(){
-  try{
-    var hasQ = location.search.indexOf('token=') !== -1;
-    var hasS = !!localStorage.getItem('rsc_token');
-    if(!hasQ && !hasS) location.replace('./login.html');
-  }catch(e){}
-})();
-</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSC Dashboard</title>
 <!-- ដាក់លើអេក្រង់ដើមទូរស័ព្ទ ៖ រូបតំណាង ឈ្មោះ និងបើកពេញអេក្រង់
